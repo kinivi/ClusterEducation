@@ -27,7 +27,11 @@ public class SignInActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener, View.OnClickListener{
 
     private static final int RC_SIGN_IN = 9001;
+
+    //variable to store ID of sign-in button
     private SignInButton mAuthButton;
+
+    //variables for Firebase authentification
     private FirebaseAuth mFirebaseAuth;
     private GoogleApiClient mGoogleApiClient;
 
@@ -41,10 +45,12 @@ public class SignInActivity extends AppCompatActivity implements
         SignInButton mAuthButton = (SignInButton) findViewById(R.id.auth_button);
         mAuthButton.setOnClickListener(this);
 
+        //Using default builder to construct SignInOptions
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
+        //Getting Google Sign In API
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
@@ -61,6 +67,11 @@ public class SignInActivity extends AppCompatActivity implements
         }
     }
 
+    /**
+     * @link GoogleSignInApi
+     * Calling Google Auth UI with intent
+     *
+     */
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, RC_SIGN_IN);

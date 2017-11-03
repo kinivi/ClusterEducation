@@ -20,10 +20,13 @@
         <activity
             android:name=".SignInActivity"
             android:label="@string/SignIn"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".ChooserActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity" />
+                android:value=".ChooserActivity" />
+        </activity>
+        <activity android:name=".ChooserActivity" >
+
         </activity>
     </application>
 
