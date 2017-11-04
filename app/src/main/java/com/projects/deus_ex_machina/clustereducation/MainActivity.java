@@ -13,7 +13,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
+//TODO(2) Add logo
+//TODO(3) Add new colors
 public class MainActivity extends AppCompatActivity
         implements GoogleApiClient.OnConnectionFailedListener{
 
@@ -27,28 +28,32 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
+        //-----------------------------Checking Authentication -------------------------
+        //Creating Google API for Client
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API)
                 .build();
 
-
-
+        //Checking if user is signed in
         if (mFirebaseUser == null) {
             // Not signed in, launch the Sign In activity
             startActivity(new Intent(this, ChooserActivity.class));
             finish();
         } else {
+            //Getting username and photo
             mUsername = mFirebaseUser.getDisplayName();
-//            if (mFirebaseUser.getPhotoUrl() != null) {
-//                mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
-//            }
+            if (mFirebaseUser.getPhotoUrl() != null) {
+                String mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
+            }
         }
+        //------------------------------------------------------------------------------
+
+        setContentView(R.layout.activity_main);
 
     }
 
@@ -63,7 +68,11 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
+    /** Functionality of bottom menu
+     *
+     * @param item
+     * @return what to do
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -81,6 +90,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * If connection failed
+     * @param connectionResult
+     */
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();

@@ -21,12 +21,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
-;
 
 public class SignInActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener, View.OnClickListener{
 
-    private static final int RC_SIGN_IN = 9001;
+    private static final int RC_SIGN_IN = 9001;//Code for Intent (on Activity result)
 
     //variable to store ID of sign-in button
     private SignInButton mAuthButton;
@@ -40,8 +39,10 @@ public class SignInActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sign_in_activity);
 
+        //Creating instance of Firebase object
         mFirebaseAuth = FirebaseAuth.getInstance();
 
+        //Settin onClick listener to the SignIn button
         SignInButton mAuthButton = (SignInButton) findViewById(R.id.auth_button);
         mAuthButton.setOnClickListener(this);
 
@@ -83,6 +84,7 @@ public class SignInActivity extends AppCompatActivity implements
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
+            //getting result of Sign in
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess()) {
                 // Google Sign In was successful, authenticate with Firebase
@@ -107,6 +109,7 @@ public class SignInActivity extends AppCompatActivity implements
                             Toast.makeText(SignInActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
+                            //If sign in succeeds, than going to Main Activity
                             startActivity(new Intent(SignInActivity.this, MainActivity.class));
                             finish();
                         }
@@ -114,8 +117,9 @@ public class SignInActivity extends AppCompatActivity implements
                 });
     }
 
+    //If connection failed, than inform user.
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 }

@@ -16,6 +16,7 @@ public class ChooserActivity extends AppCompatActivity {
         TextView entrant = (TextView) findViewById(R.id.entrant);
         TextView StudentOrMentor = (TextView) findViewById(R.id.student_mentor);
 
+        //Set click listener for entrant TdxtView
         entrant.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -23,6 +24,7 @@ public class ChooserActivity extends AppCompatActivity {
             }
         });
 
+        //If StudentOrMentor TextView is clicked, open Sign in activity
         StudentOrMentor.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
