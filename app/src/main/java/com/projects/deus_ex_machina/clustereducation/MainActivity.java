@@ -3,6 +3,7 @@ package com.projects.deus_ex_machina.clustereducation;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,7 +29,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
@@ -36,23 +36,30 @@ public class MainActivity extends AppCompatActivity
         //-----------------------------Checking Authentication -------------------------
         //Creating Google API for Client
         mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .enableAutoManage(this /* FragmentActivity */,
+                        this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API)
                 .build();
 
-        //Checking if user is signed in
-        if (mFirebaseUser == null) {
-            // Not signed in, launch the Sign In activity
-            startActivity(new Intent(this, ChooserActivity.class));
-            finish();
-        } else {
-            //Getting username and photo
-            mUsername = mFirebaseUser.getDisplayName();
-            if (mFirebaseUser.getPhotoUrl() != null) {
-                String mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
-            }
-        }
+//        //Checking if user is signed in
+//        if (mFirebaseUser == null) {
+//            // Not signed in, launch the Sign In activity
+//            startActivity(new Intent(this, ChooserActivity.class));
+//            finish();
+//        } else {
+//            //Getting username and photo
+//            mUsername = mFirebaseUser.getDisplayName();
+//            if (mFirebaseUser.getPhotoUrl() != null) {
+//                String mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
+//            }
+//        }
         //------------------------------------------------------------------------------
+
+        setContentView(R.layout.activity_main);
+
+        ViewPager viewPager = findViewById(R.id.viewpager);
+        FragmentPageAdapter adapter = new FragmentPageAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(adapter);
 
 
     }
