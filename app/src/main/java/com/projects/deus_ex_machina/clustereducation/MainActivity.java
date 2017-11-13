@@ -3,6 +3,7 @@ package com.projects.deus_ex_machina.clustereducation;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -56,11 +57,17 @@ public class MainActivity extends AppCompatActivity
         //------------------------------------------------------------------------------
 
         setContentView(R.layout.activity_main);
+        
+        //TODO Decide what to do with it
+        //getSupportActionBar().setElevation(0); Deleting shadows for Status bar
 
-        ViewPager viewPager = findViewById(R.id.viewpager);
+        ViewPager viewPager = findViewById(R.id.viewPager);
+        TabLayout tabLayout = findViewById(R.id.tabLayout);
+
         FragmentPageAdapter adapter = new FragmentPageAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
 
+        tabLayout.setupWithViewPager(viewPager);
 
     }
 
