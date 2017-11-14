@@ -15,10 +15,11 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
 //TODO(2) Add logo
 //TODO(3) Add new colors
 public class MainActivity extends AppCompatActivity
-        implements GoogleApiClient.OnConnectionFailedListener{
+        implements GoogleApiClient.OnConnectionFailedListener {
 
     private static final String ANONYMOUS = "Enroller";
     private GoogleApiClient mGoogleApiClient;
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity
                 .addApi(Auth.GOOGLE_SIGN_IN_API)
                 .build();
 
-//        //Checking if user is signed in
+        //Checking if user is signed in
 //        if (mFirebaseUser == null) {
 //            // Not signed in, launch the Sign In activity
 //            startActivity(new Intent(this, ChooserActivity.class));
@@ -57,21 +58,29 @@ public class MainActivity extends AppCompatActivity
         //------------------------------------------------------------------------------
 
         setContentView(R.layout.activity_main);
-        
+
         //TODO Decide what to do with it
         //getSupportActionBar().setElevation(0); Deleting shadows for Status bar
 
+        //Getting ID of viewPager and tabLayout
         ViewPager viewPager = findViewById(R.id.viewPager);
         TabLayout tabLayout = findViewById(R.id.tabLayout);
+
 
         FragmentPageAdapter adapter = new FragmentPageAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
 
+        //setting icons for TabLayout
         tabLayout.setupWithViewPager(viewPager);
+        int[] imageResId = {
+                R.drawable.ic_dashboard_plate,
+                R.drawable.ic_subjects,
+                R.drawable.ic_list };
+        for (int i = 0; i < imageResId.length; i++) {
+            tabLayout.getTabAt(i).setIcon(imageResId[i]);
+        }
 
     }
-
-
 
 
     @Override
@@ -82,7 +91,8 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    /** Functionality of bottom menu
+    /**
+     * Functionality of bottom menu
      *
      * @param item
      * @return what to do
@@ -106,6 +116,7 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * If connection failed
+     *
      * @param connectionResult
      */
     @Override

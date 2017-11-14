@@ -10,11 +10,13 @@ import android.support.v4.app.FragmentPagerAdapter;
  */
 
 public class FragmentPageAdapter extends FragmentPagerAdapter {
+
+
     public FragmentPageAdapter(FragmentManager fm) {
         super(fm);
     }
 
-
+    //return fragment to adapter
     @Override
     public Fragment getItem(int position) {
         switch (position) {
@@ -29,8 +31,11 @@ public class FragmentPageAdapter extends FragmentPagerAdapter {
         }
     }
 
+    //return count of fragments
     @Override
     public int getCount() {
         return 3;
     }
+
+
 }
