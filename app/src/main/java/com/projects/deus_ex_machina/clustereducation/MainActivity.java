@@ -44,17 +44,17 @@ public class MainActivity extends AppCompatActivity
                 .build();
 
         //Checking if user is signed in
-//        if (mFirebaseUser == null) {
-//            // Not signed in, launch the Sign In activity
-//            startActivity(new Intent(this, ChooserActivity.class));
-//            finish();
-//        } else {
-//            //Getting username and photo
-//            mUsername = mFirebaseUser.getDisplayName();
-//            if (mFirebaseUser.getPhotoUrl() != null) {
-//                String mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
-//            }
-//        }
+        if (mFirebaseUser == null) {
+            // Not signed in, launch the Sign In activity
+            startActivity(new Intent(this, ChooserActivity.class));
+            finish();
+        } else {
+            //Getting username and photo
+            mUsername = mFirebaseUser.getDisplayName();
+            if (mFirebaseUser.getPhotoUrl() != null) {
+                String mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
+            }
+        }
         //------------------------------------------------------------------------------
 
         setContentView(R.layout.activity_main);
