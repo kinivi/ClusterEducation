@@ -3,6 +3,7 @@ package com.projects.deus_ex_machina.clustereducation;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -37,33 +39,39 @@ public class DashboardFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
+        ConstraintLayout constraintLayout = rootView.findViewById(R.id.pieLayout);
+        int height = constraintLayout.getMaxHeight();
+
+
         mChart = (PieChart) rootView.findViewById(R.id.pieChart);
         mChart.setBackgroundColor(Color.WHITE);
 
         mChart.setUsePercentValues(true);
         mChart.getDescription().setEnabled(false);
 
-        mChart.setCenterText("Hello World");
+        //mChart.setCenterText("Hello World");
 
-        mChart.setDrawHoleEnabled(true);
-        mChart.setHoleColor(Color.WHITE);
+        mChart.setDrawHoleEnabled(false);
+        //mChart.setHoleColor(Color.WHITE);
 
-        mChart.setTransparentCircleColor(Color.WHITE);
-        mChart.setTransparentCircleAlpha(110);
+        //mChart.setTransparentCircleColor(Color.WHITE);
+        //mChart.setTransparentCircleAlpha(110);
 
-        mChart.setHoleRadius(58f);
-        mChart.setTransparentCircleRadius(61f);
-
+        //mChart.setHoleRadius(55f);
+        //mChart.setTransparentCircleRadius(58f);
+        Legend l = mChart.getLegend();
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.CENTER);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+        l.setOrientation(Legend.LegendOrientation.VERTICAL);
         mChart.setDrawCenterText(true);
 
-        mChart.setRotationEnabled(false);
         mChart.setHighlightPerTapEnabled(true);
 
-        mChart.setMaxAngle(180f); // HALF CHART
-        mChart.setRotationAngle(180f);
         setData(4, 100);
 
         mChart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
+
+
 
 
         return rootView;
@@ -73,7 +81,7 @@ public class DashboardFragment extends Fragment {
         ArrayList<PieEntry> values = new ArrayList<PieEntry>();
 
         for (int i = 0; i < count; i++) {
-            values.add(new PieEntry((float) ((Math.random() * range) + range / 5)));
+            values.add(new PieEntry((float) ((Math.random() * range) + range / 5), "Quarter"));
         }
 
         PieDataSet dataSet = new PieDataSet(values, "Election Results");
