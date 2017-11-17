@@ -10,8 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -27,6 +31,7 @@ import java.util.ArrayList;
 public class DashboardFragment extends Fragment {
 
     private PieChart mChart;
+    private HorizontalBarChart mBarChart;
 
 
     public DashboardFragment() {
@@ -44,6 +49,7 @@ public class DashboardFragment extends Fragment {
 
 
         mChart = (PieChart) rootView.findViewById(R.id.pieChart);
+        mBarChart = (HorizontalBarChart) rootView.findViewById(R.id.horizontalBarChart);
         mChart.setBackgroundColor(Color.WHITE);
 
         mChart.setUsePercentValues(true);
@@ -68,8 +74,10 @@ public class DashboardFragment extends Fragment {
         mChart.setHighlightPerTapEnabled(true);
 
         setData(4, 100);
+        setDataForBarChart(4,100);
 
-        mChart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
+        mChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
+        mBarChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
 
 
 
@@ -98,6 +106,26 @@ public class DashboardFragment extends Fragment {
         mChart.setData(data);
 
         mChart.invalidate();
+    }
+
+    private void setDataForBarChart(int count , int range) {
+        ArrayList<BarEntry> values = new ArrayList<BarEntry>();
+
+        for (int i = 0; i < count; i++) {
+            values.add(new BarEntry(i+'f',(float) ((Math.random() * range) + range / 5), "Quarter"));
+        }
+
+        BarDataSet dataSet = new BarDataSet(values, "Election Results");
+        dataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        //dataSet.setSelectionShift(0f);
+
+        BarData data = new BarData(dataSet);
+        data.setValueFormatter(new PercentFormatter());
+        data.setValueTextSize(11f);
+        //data.setValueTextColor(Color.WHITE);
+        mBarChart.setData(data);
+
+        mBarChart.invalidate();
     }
 
 }
