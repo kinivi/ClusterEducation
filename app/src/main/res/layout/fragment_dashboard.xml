@@ -26,7 +26,9 @@
             <android.support.constraint.ConstraintLayout
                 android:id="@+id/pieLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:padding="2dp"
+                >
 
 
                 <com.github.mikephil.charting.charts.PieChart
@@ -34,8 +36,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_marginBottom="2dp"
-                    android:layout_marginTop="2dp"
+
+
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
