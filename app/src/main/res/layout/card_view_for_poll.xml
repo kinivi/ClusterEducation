@@ -13,7 +13,7 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/buttonHide2"
+            android:id="@+id/buttonHide"
             style="@android:style/Widget.Material.Light.Button.Borderless.Colored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -21,12 +21,12 @@
             android:text="HIDE"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageCardView2"
+            app:layout_constraintTop_toBottomOf="@+id/imageCardView"
             app:layout_constraintVertical_bias="1.0"
             tools:ignore="NewApi" />
 
         <ImageView
-            android:id="@+id/imageCardView2"
+            android:id="@+id/imageCardView"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_marginEnd="16dp"
@@ -37,7 +37,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/cardTitle2"
+            android:id="@+id/cardTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
@@ -47,8 +47,8 @@
             android:layout_marginTop="24dp"
             android:text="TextView"
             android:textAppearance="@android:style/TextAppearance.Material.Title"
-            app:layout_constraintBottom_toTopOf="@+id/cardSubtitle2"
-            app:layout_constraintEnd_toStartOf="@+id/imageCardView2"
+            app:layout_constraintBottom_toTopOf="@+id/cardSubtitle"
+            app:layout_constraintEnd_toStartOf="@+id/imageCardView"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -56,7 +56,7 @@
             tools:text="Cluster Education poll" />
 
         <TextView
-            android:id="@+id/cardSubtitle2"
+            android:id="@+id/cardSubtitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -70,17 +70,17 @@
             android:text="TextView"
             android:textAlignment="viewStart"
             android:textAppearance="@android:style/TextAppearance.Material.Widget.ActionBar.Subtitle"
-            app:layout_constraintBottom_toTopOf="@+id/buttonAnswer2"
-            app:layout_constraintEnd_toStartOf="@+id/imageCardView2"
+            app:layout_constraintBottom_toTopOf="@+id/buttonAnswer"
+            app:layout_constraintEnd_toStartOf="@+id/imageCardView"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardTitle2"
+            app:layout_constraintTop_toBottomOf="@+id/cardTitle"
             tools:ignore="NewApi"
             tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labo"
              />
 
         <Button
-            android:id="@+id/buttonAnswer2"
+            android:id="@+id/buttonAnswer"
             style="@android:style/Widget.DeviceDefault.Button.Borderless"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -89,8 +89,8 @@
             android:layout_marginTop="8dp"
             android:text="ANSWER"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/buttonHide2"
-            app:layout_constraintTop_toBottomOf="@+id/imageCardView2"
+            app:layout_constraintStart_toEndOf="@+id/buttonHide"
+            app:layout_constraintTop_toBottomOf="@+id/imageCardView"
             app:layout_constraintVertical_bias="1.0" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>

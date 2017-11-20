@@ -14,7 +14,7 @@
         android:padding="8dp"
         tools:context="com.projects.deus_ex_machina.clustereducation.DashboardFragment">
 
-        <!--Розібратись з clipPadding and clipChildre-->
+        <!--Розібратись з clipPadding and clipChildrem-->
 
 
         <android.support.v7.widget.CardView
@@ -71,7 +71,7 @@
         </android.support.v7.widget.CardView>
 
 
-        <include layout="@layout/card_view_for_poll" />
+        <include layout="@layout/card_view_for_poll"/>
 
         <include layout="@layout/card_view_for_poll" />
 
