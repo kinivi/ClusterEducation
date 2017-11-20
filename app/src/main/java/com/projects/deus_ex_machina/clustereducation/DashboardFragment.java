@@ -173,7 +173,7 @@ public class DashboardFragment extends Fragment {
         l.setDrawInside(false);
 
         l.setFormSize(10f);
-        l.setTextSize(10f);
+        l.setTextSize(12f);
 
         //sets the space between the form and the actual label/text, converts to dp internally
         l.setFormToTextSpace(4f);
