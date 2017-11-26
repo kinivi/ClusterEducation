@@ -68,6 +68,7 @@ public class DashboardFragment extends Fragment {
             }
         });
 
+        //Setting fake data for chart
         setDataForPieChart(4, 85);
         setDataForBarChart(4, 80);
 
