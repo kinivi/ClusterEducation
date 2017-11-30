@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity
 //        if (mFirebaseUser == null) {
 //            // Not signed in, launch the Sign In activity
 //            startActivity(new Intent(this, ChooserActivity.class));
-//            finish();
 //        } else {
 //            //Getting username and photo
 //            mUsername = mFirebaseUser.getDisplayName();
