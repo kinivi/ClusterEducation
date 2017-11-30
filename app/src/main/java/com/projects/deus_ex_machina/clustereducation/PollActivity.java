@@ -17,6 +17,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+import com.google.firebase.database.ValueEventListener;
 
 public class PollActivity extends AppCompatActivity {
 
@@ -37,6 +38,11 @@ public class PollActivity extends AppCompatActivity {
 
     //Context for using Toast
     Context context;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,12 +68,25 @@ public class PollActivity extends AppCompatActivity {
 
         buttonSend.setOnClickListener(listenerToSendButton);
 
+
+        DatabaseReference values = mDatabase.child("polls/5a193a33/Question1/CountOfAnswers");
+        values.orderByValue().limitToLast(3).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("TAGGGGGGGGGG", String.valueOf(dataSnapshot.getChildrenCount()));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     View.OnClickListener listenerToSendButton = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-
             //Getting comments to answers in poll
             String comment1 = String.valueOf(editText1.getText());
             String comment2 = String.valueOf(editText2.getText());
@@ -79,6 +98,7 @@ public class PollActivity extends AppCompatActivity {
                     .getText());
 
 
+            //Pushing all answer to Database
             mDatabase.child("polls/5a193a33/EachAnswers").push()
                     .setValue(new PollResult(value1, value2, comment1, comment2));
 
