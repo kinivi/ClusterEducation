@@ -20,7 +20,17 @@
         <activity android:name=".ChooserActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".PollActivity"
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="stateHidden"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.ANSWER"/>
+                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
     </application>

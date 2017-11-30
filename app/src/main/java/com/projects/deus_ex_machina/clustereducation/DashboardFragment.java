@@ -1,6 +1,7 @@
 package com.projects.deus_ex_machina.clustereducation;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
@@ -34,6 +36,7 @@ import static com.github.mikephil.charting.utils.ColorTemplate.rgb;
  */
 public class DashboardFragment extends Fragment {
 
+    private static final int GOOD_RESULT = 12;
     private PieChart mPieChart;
     private HorizontalBarChart mBarChart;
 
@@ -47,7 +50,10 @@ public class DashboardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         //Getting the rootView to access standard methods of Activity in Fragment
-        View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
+
+        //Getting ID of answer button on Card View
+        Button buttonAnswerOnCardView = rootView.findViewById(R.id.buttonAnswer);
 
         //Getting ID's of 2 charts
         mPieChart = (PieChart) rootView.findViewById(R.id.pieChart);
@@ -56,10 +62,18 @@ public class DashboardFragment extends Fragment {
         setPieChartAppearance();
         setBarChartAppearance();
 
+        buttonAnswerOnCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivityForResult(new Intent(rootView.getContext(), PollActivity.class), GOOD_RESULT);
+            }
+        });
 
+        //Setting fake data for chart
         setDataForPieChart(4, 85);
         setDataForBarChart(4, 80);
 
+        //Animate charts
         mPieChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
         mBarChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
 
@@ -157,6 +171,9 @@ public class DashboardFragment extends Fragment {
 
         // scaling can now only be done on x- and y-axis separately
         mBarChart.setPinchZoom(false);
+
+        //disable double-tap zoom
+        mBarChart.setDoubleTapToZoomEnabled(false);
 
         //Disable drawing grid on the background
         mBarChart.setDrawGridBackground(false);
