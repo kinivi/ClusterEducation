@@ -36,6 +36,7 @@ import static com.github.mikephil.charting.utils.ColorTemplate.rgb;
  */
 public class DashboardFragment extends Fragment {
 
+    private static final int GOOD_RESULT = 12;
     private PieChart mPieChart;
     private HorizontalBarChart mBarChart;
 
@@ -64,7 +65,7 @@ public class DashboardFragment extends Fragment {
         buttonAnswerOnCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(rootView.getContext(), PollActivity.class));
+                startActivityForResult(new Intent(rootView.getContext(), PollActivity.class), GOOD_RESULT);
             }
         });
 

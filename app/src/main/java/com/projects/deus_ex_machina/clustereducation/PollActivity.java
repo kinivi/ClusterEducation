@@ -1,5 +1,6 @@
 package com.projects.deus_ex_machina.clustereducation;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -8,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,6 +21,7 @@ import com.google.firebase.database.Transaction;
 public class PollActivity extends AppCompatActivity {
 
     private static final int COUNT_OF_CARDS = 2;
+    private static final int GOOD_RESULT = 12;
     private DatabaseReference mDatabase;
 
 
@@ -32,10 +35,16 @@ public class PollActivity extends AppCompatActivity {
     //Getting references of Button to process onClickListener
     Button buttonSend;
 
+    //Context for using Toast
+    Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_poll);
+
+        //Getting context
+        context = PollActivity.this;
 
         //Getting instance of Database to use it
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -121,6 +130,10 @@ public class PollActivity extends AppCompatActivity {
                     Log.d("TAG", "postTransaction:onComplete:" + databaseError);
                 }
             });
+
+            Toast.makeText(context, "Answer is sent", Toast.LENGTH_SHORT).show();
+            setResult(GOOD_RESULT);
+            finish();
 
         }
     };
