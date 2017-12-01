@@ -1,11 +1,13 @@
 package com.projects.deus_ex_machina.clustereducation;
 
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +27,11 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -41,6 +48,7 @@ public class DashboardFragment extends Fragment {
     private HorizontalBarChart mBarChart;
 
 
+
     public DashboardFragment() {
         // Required empty public constructor
     }
@@ -51,6 +59,14 @@ public class DashboardFragment extends Fragment {
                              Bundle savedInstanceState) {
         //Getting the rootView to access standard methods of Activity in Fragment
         final View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
+
+        final ProgressDialog progDailog = new ProgressDialog(rootView.getContext());
+        progDailog.setMessage("Loading...");
+        progDailog.setIndeterminate(false);
+        progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progDailog.setCancelable(true);
+        progDailog.show();
+
 
         //Getting ID of answer button on Card View
         Button buttonAnswerOnCardView = rootView.findViewById(R.id.buttonAnswer);
@@ -69,27 +85,52 @@ public class DashboardFragment extends Fragment {
             }
         });
 
-        //Setting fake data for chart
-        setDataForPieChart(4, 85);
-        setDataForBarChart(4, 80);
+
+        DatabaseReference mDataChart = FirebaseDatabase.getInstance().getReference().child("polls/5a193a33" +
+        "/Question1/CountOfAnswers");
+
+        mDataChart.orderByValue().limitToLast(3).addListenerForSingleValueEvent(new ValueEventListener() {
+
+            ArrayList<Integer> arrayList = new ArrayList<Integer>();
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                for (DataSnapshot data:
+                     dataSnapshot.getChildren()) {
+                    Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
+                    arrayList.add(data.getValue(Integer.class));
+                }
+
+                setDataForPieChart(3,100,arrayList);
+
+
+
+
+
+                progDailog.cancel();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                progDailog.cancel();
+            }
+        });
 
         //Animate charts
         mPieChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
         mBarChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
-
-        FirebaseGetter firebaseGetter = new FirebaseGetter();
-
 
 
 
         return rootView;
     }
 
-    private void setDataForPieChart(int count, int range) {
+    private void setDataForPieChart(int count, int range, ArrayList<Integer> arrayList) {
         ArrayList<PieEntry> values = new ArrayList<PieEntry>();
 
         for (int i = 0; i < count; i++) {
-            values.add(new PieEntry((float) ((Math.random() * range) + range / 5), "Good"));
+            values.add(new PieEntry((float) arrayList.get(i), "Good"));
         }
 
         PieDataSet dataSet = new PieDataSet(values, "Mark of program");
@@ -110,7 +151,7 @@ public class DashboardFragment extends Fragment {
         mPieChart.invalidate();
     }
 
-    private void setDataForBarChart(int count, int range) {
+    private void setDataForBarChart(int count, int range){
 
         BarData data = new BarData();
 

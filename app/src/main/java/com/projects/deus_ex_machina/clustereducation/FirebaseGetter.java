@@ -1,9 +1,5 @@
 package com.projects.deus_ex_machina.clustereducation;
 
-import android.util.Log;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -20,29 +16,27 @@ public class FirebaseGetter implements DatabaseGetterInterface {
     private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference()
             .child("polls/5a193a33");
 
+
+    public void GetData(ValueEventListener vel) {
+        DatabaseReference values = mDatabase.child("Question1"
+                + "/CountOfAnswers");
+        values.orderByValue().addValueEventListener(vel);
+    }
+
+
+
     @Override
     public ArrayList<Integer> getValuesOfQuestion(int numberOfQuestion) {
 
+        DatabaseReference values = mDatabase.child("Question" + numberOfQuestion
+                + "/CountOfAnswers");
 
-
-        DatabaseReference values = mDatabase.child("Question" + numberOfQuestion + "/CountOfAnswers");
-        values.orderByValue().limitToLast(3).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("TAGGGGGGGGGG", String.valueOf(dataSnapshot.getChildrenCount()));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-
+        final ArrayList<Integer> list = new ArrayList<Integer>();
 
 
         return null;
+
+
     }
 
     @Override
@@ -50,3 +44,7 @@ public class FirebaseGetter implements DatabaseGetterInterface {
         return null;
     }
 }
+
+
+
+

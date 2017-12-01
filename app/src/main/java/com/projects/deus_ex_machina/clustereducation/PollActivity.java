@@ -17,7 +17,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
-import com.google.firebase.database.ValueEventListener;
 
 public class PollActivity extends AppCompatActivity {
 
@@ -69,18 +68,21 @@ public class PollActivity extends AppCompatActivity {
         buttonSend.setOnClickListener(listenerToSendButton);
 
 
-        DatabaseReference values = mDatabase.child("polls/5a193a33/Question1/CountOfAnswers");
-        values.orderByValue().limitToLast(3).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d("TAGGGGGGGGGG", String.valueOf(dataSnapshot.getChildrenCount()));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+//        DatabaseReference values = mDatabase.child("polls/5a193a33/Question1/CountOfAnswers");
+//        values.orderByValue().addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                for (DataSnapshot data:
+//                     dataSnapshot.getChildren()) {
+//                    Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
 
     }
 
