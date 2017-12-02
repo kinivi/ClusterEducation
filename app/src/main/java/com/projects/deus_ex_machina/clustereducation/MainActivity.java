@@ -128,6 +128,14 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Intent showSplash = new Intent(MainActivity.this, SplashActivity.class);
+
+        MainActivity.this.startActivity(showSplash);
+        MainActivity.this.finish();
+    }
 }
 
 
