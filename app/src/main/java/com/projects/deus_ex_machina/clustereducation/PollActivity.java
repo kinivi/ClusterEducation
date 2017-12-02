@@ -3,7 +3,6 @@ package com.projects.deus_ex_machina.clustereducation;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -104,58 +103,106 @@ public class PollActivity extends AppCompatActivity {
             mDatabase.child("polls/5a193a33/EachAnswers").push()
                     .setValue(new PollResult(value1, value2, comment1, comment2));
 
-            //Incrementing overall count of each answer in connection with user's answer
-            mDatabase.child("polls/5a193a33").runTransaction(new Transaction.Handler() {
+            mDatabase.child("polls/5a193a33/Question1/CountOfAnswers/" + value1).runTransaction(new Transaction.Handler() {
                 @Override
                 public Transaction.Result doTransaction(MutableData mutableData) {
 
-                    int counter = 0;
 
-                    for (MutableData childValue :
-                            mutableData.child("Question1/NameOfAnswers").getChildren()) {
-                        counter++;
-                        if (value1.equals(childValue.getValue(String.class))) {
+                    int count;
+                    try {
+                        count = mutableData.getValue(Integer.class);
+                        mutableData.setValue(++count);
+                    } catch (NullPointerException e){
 
-                            //Getting count of Answers to increment
-                            int count = mutableData.child("Question1/CountOfAnswers/Option" + counter)
-                                    .getValue(Integer.class);
-
-                            //Setting new data(increment)
-                            mutableData.child("Question1/CountOfAnswers/Option" + counter).setValue(++count);
-                        }
                     }
 
-                    counter = 0;
-
-                    for (MutableData n :
-                            mutableData.child("Question2/NameOfAnswers").getChildren()) {
-                        counter++;
-                        if (value2.equals(n.getValue(String.class))) {
-
-                            //Getting count of Answers to increment
-                            int count = mutableData.child("Question2/CountOfAnswers/Option" + counter)
-                                    .getValue(Integer.class);
-
-                            //Setting new data(increment)
-                            mutableData.child("Question2/CountOfAnswers/Option" + counter).setValue(++count);
-                        }
-                    }
 
 
                     return Transaction.success(mutableData);
                 }
 
-
                 @Override
-                public void onComplete(DatabaseError databaseError, boolean commited, DataSnapshot dataSnapshot) {
-                    Log.d(String.valueOf(Log.INFO), commited + "");
-                    Log.d("TAG", "postTransaction:onComplete:" + databaseError);
+                public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
                 }
             });
 
-            Toast.makeText(context, "Answer is sent", Toast.LENGTH_SHORT).show();
-            setResult(GOOD_RESULT);
-            finish();
+            mDatabase.child("polls/5a193a33/Question2/CountOfAnswers/" + value2).runTransaction(new Transaction.Handler() {
+                @Override
+                public Transaction.Result doTransaction(MutableData mutableData) {
+
+
+                    int count;
+                    try {
+                        count = mutableData.getValue(Integer.class);
+                        mutableData.setValue(++count);
+                    } catch (NullPointerException e){
+
+                    }
+
+
+
+                    return Transaction.success(mutableData);
+                }
+
+                @Override
+                public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                    Toast.makeText(context,"Your answer is saved", Toast.LENGTH_SHORT).show();
+                    setResult(GOOD_RESULT);
+                    finish();
+                }
+            });
+
+            //Incrementing overall count of each answer in connection with user's answer
+//            mDatabase.child("polls/5a193a33").runTransaction(new Transaction.Handler() {
+//                @Override
+//                public Transaction.Result doTransaction(MutableData mutableData) {
+//
+//                    int counter = 0;
+//
+//                    for (MutableData childValue :
+//                            mutableData.child("Question1/CountOfAnswers").getChildren()) {
+//                        counter++;
+//
+//                        //Getting count of Answers to increment
+//                        int count = mutableData.child("Question1/CountOfAnswers/" + value1)
+//                                .getValue(Integer.class);
+//
+//                        //Setting new data(increment)
+//                        mutableData.child("Question1/CountOfAnswers/" + value1).setValue(++count);
+//
+//                    }
+//
+//                    counter = 0;
+//
+//                    for (MutableData n :
+//                            mutableData.child("Question2/CountOfAnswers").getChildren()) {
+//                        counter++;
+//
+//
+//                            //Getting count of Answers to increment
+//                            int count = mutableData.child("Question2/CountOfAnswers/" + value2)
+//                                    .getValue(Integer.class);
+//
+//                            //Setting new data(increment)
+//                            mutableData.child("Question2/CountOfAnswers/" + value2).setValue(++count);
+//
+//                    }
+//
+//
+//                    return Transaction.success(mutableData);
+//                }
+//
+//
+//                @Override
+//                public void onComplete(DatabaseError databaseError, boolean commited, DataSnapshot dataSnapshot) {
+//                    Log.d(String.valueOf(Log.INFO), commited + "");
+//                    Log.d("TAG", "postTransaction:onComplete:" + databaseError);
+//
+//                }
+//            });
+
+
 
         }
     };
