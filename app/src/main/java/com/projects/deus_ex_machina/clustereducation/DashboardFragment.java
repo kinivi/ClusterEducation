@@ -1,17 +1,20 @@
 package com.projects.deus_ex_machina.clustereducation;
 
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
@@ -46,6 +49,11 @@ public class DashboardFragment extends Fragment {
     private static final int GOOD_RESULT = 12;
     private PieChart mPieChart;
     private HorizontalBarChart mBarChart;
+    private View rootView;
+    private ArrayList<ArrayList<Pair<String,Integer>>> chartData =
+            new ArrayList<ArrayList<Pair<String, Integer>>>();
+    private ProgressBar progressBar;
+    private ScrollView dashboardLayout;
 
 
 
@@ -55,21 +63,52 @@ public class DashboardFragment extends Fragment {
 
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+
+
+        DatabaseReference mDataChart = FirebaseDatabase.getInstance().getReference().child("polls/5a193a33" +
+                "/Question1/CountOfAnswers");
+
+        mDataChart.orderByValue().limitToLast(3).addListenerForSingleValueEvent(new ValueEventListener() {
+
+            ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                for (DataSnapshot data:
+                        dataSnapshot.getChildren()) {
+                    Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
+                    arrayList.add(new Pair<String, Integer>(data.getKey(), data.getValue(Integer.class)));
+                }
+
+                chartData.add(arrayList);
+                updateUI();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         //Getting the rootView to access standard methods of Activity in Fragment
-        final View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
-
-        final ProgressDialog progDailog = new ProgressDialog(rootView.getContext());
-        progDailog.setMessage("Loading...");
-        progDailog.setIndeterminate(false);
-        progDailog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        progDailog.setCancelable(true);
-        progDailog.show();
+        rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
 
         //Getting ID of answer button on Card View
         Button buttonAnswerOnCardView = rootView.findViewById(R.id.buttonAnswer);
+
+        progressBar = rootView.findViewById(R.id.progressBar);
+
+        dashboardLayout = rootView.findViewById(R.id.dashboard_layout);
+
 
         //Getting ID's of 2 charts
         mPieChart = (PieChart) rootView.findViewById(R.id.pieChart);
@@ -85,52 +124,36 @@ public class DashboardFragment extends Fragment {
             }
         });
 
+        updateUI();
 
-        DatabaseReference mDataChart = FirebaseDatabase.getInstance().getReference().child("polls/5a193a33" +
-        "/Question1/CountOfAnswers");
-
-        mDataChart.orderByValue().limitToLast(3).addListenerForSingleValueEvent(new ValueEventListener() {
-
-            ArrayList<Integer> arrayList = new ArrayList<Integer>();
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-
-                for (DataSnapshot data:
-                     dataSnapshot.getChildren()) {
-                    Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
-                    arrayList.add(data.getValue(Integer.class));
-                }
-
-                setDataForPieChart(3,100,arrayList);
-
-
-
-
-
-                progDailog.cancel();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                progDailog.cancel();
-            }
-        });
 
         //Animate charts
-        mPieChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
-        mBarChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
+
+
 
 
 
         return rootView;
     }
 
-    private void setDataForPieChart(int count, int range, ArrayList<Integer> arrayList) {
+    private void updateUI(){
+        if (rootView == null) { // Check if view is already inflated
+            return;
+        }
+
+        if (chartData.size() != 0) {
+            // View is already inflated and data is ready - update the view!
+            setDataForPieChart(3,5,chartData.get(0));
+            progressBar.setVisibility(View.GONE);
+            dashboardLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setDataForPieChart(int count, int range, ArrayList<Pair<String, Integer>> arrayList) {
         ArrayList<PieEntry> values = new ArrayList<PieEntry>();
 
         for (int i = 0; i < count; i++) {
-            values.add(new PieEntry((float) arrayList.get(i), "Good"));
+            values.add(new PieEntry((float) arrayList.get(i).second, arrayList.get(i).first));
         }
 
         PieDataSet dataSet = new PieDataSet(values, "Mark of program");
@@ -149,6 +172,7 @@ public class DashboardFragment extends Fragment {
         mPieChart.setData(data);
 
         mPieChart.invalidate();
+        mPieChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
     }
 
     private void setDataForBarChart(int count, int range){
@@ -173,6 +197,7 @@ public class DashboardFragment extends Fragment {
         mBarChart.setData(data);
 
         mBarChart.invalidate();
+        mBarChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
     }
 
     private void setPieChartAppearance() {

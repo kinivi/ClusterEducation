@@ -18,8 +18,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.ArrayList;
-
 //TODO(2) Add logo
 //TODO(3) Add new colors
 public class MainActivity extends AppCompatActivity
@@ -31,7 +29,6 @@ public class MainActivity extends AppCompatActivity
     private FirebaseUser mFirebaseUser;
     private String mUsername;
     private DatabaseReference mDatabase;
-    private FirebaseGetter mFirebaseGetter;
 
 
     @Override
@@ -130,14 +127,6 @@ public class MainActivity extends AppCompatActivity
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
-
-    public ArrayList<ArrayList> getDataFromDatabase() {
-
-
-
-        return null;
-    }
-
 
 }
 
