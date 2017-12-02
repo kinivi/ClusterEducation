@@ -3,6 +3,7 @@ package com.projects.deus_ex_machina.clustereducation;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,6 +17,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
+
+import java.util.ArrayList;
 
 public class PollActivity extends AppCompatActivity {
 
@@ -65,24 +68,6 @@ public class PollActivity extends AppCompatActivity {
         buttonSend = findViewById(R.id.button_send);
 
         buttonSend.setOnClickListener(listenerToSendButton);
-
-
-//        DatabaseReference values = mDatabase.child("polls/5a193a33/Question1/CountOfAnswers");
-//        values.orderByValue().addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for (DataSnapshot data:
-//                     dataSnapshot.getChildren()) {
-//                    Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-
     }
 
     View.OnClickListener listenerToSendButton = new View.OnClickListener() {
@@ -92,117 +77,51 @@ public class PollActivity extends AppCompatActivity {
             String comment1 = String.valueOf(editText1.getText());
             String comment2 = String.valueOf(editText2.getText());
 
-            final String value1 = String.valueOf(((RadioButton) findViewById(group1.getCheckedRadioButtonId()))
-                    .getText());
+            //Array of answers for each question
+            ArrayList<String> valuesData = new ArrayList<String>();
 
-            final String value2 = String.valueOf(((RadioButton) findViewById(group2.getCheckedRadioButtonId()))
-                    .getText());
+            valuesData.add(String.valueOf(((RadioButton) findViewById(group1.getCheckedRadioButtonId()))
+                    .getText()));
+
+            valuesData.add(String.valueOf(((RadioButton) findViewById(group2.getCheckedRadioButtonId()))
+                    .getText()));
 
 
             //Pushing all answer to Database
             mDatabase.child("polls/5a193a33/EachAnswers").push()
-                    .setValue(new PollResult(value1, value2, comment1, comment2));
+                    .setValue(new PollResult(valuesData.get(0), valuesData.get(1), comment1, comment2));
 
-            mDatabase.child("polls/5a193a33/Question1/CountOfAnswers/" + value1).runTransaction(new Transaction.Handler() {
-                @Override
-                public Transaction.Result doTransaction(MutableData mutableData) {
+            //For each question run transaction
+            for (int i = 0; i <= 1; i++) {
+                mDatabase.child("polls/5a193a33/Question" + (i + 1) + "/CountOfAnswers/" + valuesData.get(i))
+                        .runTransaction(new Transaction.Handler() {
+                            @Override
+                            public Transaction.Result doTransaction(MutableData mutableData) {
 
+                                int value;
 
-                    int count;
-                    try {
-                        count = mutableData.getValue(Integer.class);
-                        mutableData.setValue(++count);
-                    } catch (NullPointerException e){
-
-                    }
-
-
-
-                    return Transaction.success(mutableData);
-                }
-
-                @Override
-                public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-
-                }
-            });
-
-            mDatabase.child("polls/5a193a33/Question2/CountOfAnswers/" + value2).runTransaction(new Transaction.Handler() {
-                @Override
-                public Transaction.Result doTransaction(MutableData mutableData) {
+                                try {
+                                    value = mutableData.getValue(Integer.class);
+                                    mutableData.setValue(++value);
+                                } catch (NullPointerException e) {
+                                    Log.e("Error in PollActivity", e.getMessage());
+                                }
 
 
-                    int count;
-                    try {
-                        count = mutableData.getValue(Integer.class);
-                        mutableData.setValue(++count);
-                    } catch (NullPointerException e){
+                                return Transaction.success(mutableData);
+                            }
 
-                    }
+                            @Override
+                            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
 
+                            }
+                        });
+            }
 
-
-                    return Transaction.success(mutableData);
-                }
-
-                @Override
-                public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-                    Toast.makeText(context,"Your answer is saved", Toast.LENGTH_SHORT).show();
-                    setResult(GOOD_RESULT);
-                    finish();
-                }
-            });
-
-            //Incrementing overall count of each answer in connection with user's answer
-//            mDatabase.child("polls/5a193a33").runTransaction(new Transaction.Handler() {
-//                @Override
-//                public Transaction.Result doTransaction(MutableData mutableData) {
-//
-//                    int counter = 0;
-//
-//                    for (MutableData childValue :
-//                            mutableData.child("Question1/CountOfAnswers").getChildren()) {
-//                        counter++;
-//
-//                        //Getting count of Answers to increment
-//                        int count = mutableData.child("Question1/CountOfAnswers/" + value1)
-//                                .getValue(Integer.class);
-//
-//                        //Setting new data(increment)
-//                        mutableData.child("Question1/CountOfAnswers/" + value1).setValue(++count);
-//
-//                    }
-//
-//                    counter = 0;
-//
-//                    for (MutableData n :
-//                            mutableData.child("Question2/CountOfAnswers").getChildren()) {
-//                        counter++;
-//
-//
-//                            //Getting count of Answers to increment
-//                            int count = mutableData.child("Question2/CountOfAnswers/" + value2)
-//                                    .getValue(Integer.class);
-//
-//                            //Setting new data(increment)
-//                            mutableData.child("Question2/CountOfAnswers/" + value2).setValue(++count);
-//
-//                    }
-//
-//
-//                    return Transaction.success(mutableData);
-//                }
-//
-//
-//                @Override
-//                public void onComplete(DatabaseError databaseError, boolean commited, DataSnapshot dataSnapshot) {
-//                    Log.d(String.valueOf(Log.INFO), commited + "");
-//                    Log.d("TAG", "postTransaction:onComplete:" + databaseError);
-//
-//                }
-//            });
-
-
+            //Exit activity and show Toast
+            Toast.makeText(context, "Your answer is saved", Toast.LENGTH_SHORT).show();
+            setResult(GOOD_RESULT);
+            finish();
 
         }
     };
