@@ -18,6 +18,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 
+import java.util.ArrayList;
+
 public class PollActivity extends AppCompatActivity {
 
     private static final int COUNT_OF_CARDS = 2;
@@ -37,6 +39,11 @@ public class PollActivity extends AppCompatActivity {
 
     //Context for using Toast
     Context context;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,77 +68,58 @@ public class PollActivity extends AppCompatActivity {
         buttonSend = findViewById(R.id.button_send);
 
         buttonSend.setOnClickListener(listenerToSendButton);
-
     }
 
     View.OnClickListener listenerToSendButton = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-
             //Getting comments to answers in poll
             String comment1 = String.valueOf(editText1.getText());
             String comment2 = String.valueOf(editText2.getText());
 
-            final String value1 = String.valueOf(((RadioButton) findViewById(group1.getCheckedRadioButtonId()))
-                    .getText());
+            //Array of answers for each question
+            ArrayList<String> valuesData = new ArrayList<String>();
 
-            final String value2 = String.valueOf(((RadioButton) findViewById(group2.getCheckedRadioButtonId()))
-                    .getText());
+            valuesData.add(String.valueOf(((RadioButton) findViewById(group1.getCheckedRadioButtonId()))
+                    .getText()));
+
+            valuesData.add(String.valueOf(((RadioButton) findViewById(group2.getCheckedRadioButtonId()))
+                    .getText()));
 
 
+            //Pushing all answer to Database
             mDatabase.child("polls/5a193a33/EachAnswers").push()
-                    .setValue(new PollResult(value1, value2, comment1, comment2));
+                    .setValue(new PollResult(valuesData.get(0), valuesData.get(1), comment1, comment2));
 
-            //Incrementing overall count of each answer in connection with user's answer
-            mDatabase.child("polls/5a193a33").runTransaction(new Transaction.Handler() {
-                @Override
-                public Transaction.Result doTransaction(MutableData mutableData) {
+            //For each question run transaction
+            for (int i = 0; i <= 1; i++) {
+                mDatabase.child("polls/5a193a33/Question" + (i + 1) + "/CountOfAnswers/" + valuesData.get(i))
+                        .runTransaction(new Transaction.Handler() {
+                            @Override
+                            public Transaction.Result doTransaction(MutableData mutableData) {
 
-                    int counter = 0;
+                                int value;
 
-                    for (MutableData childValue :
-                            mutableData.child("Question1/NameOfAnswers").getChildren()) {
-                        counter++;
-                        if (value1.equals(childValue.getValue(String.class))) {
-
-                            //Getting count of Answers to increment
-                            int count = mutableData.child("Question1/CountOfAnswers/Option" + counter)
-                                    .getValue(Integer.class);
-
-                            //Setting new data(increment)
-                            mutableData.child("Question1/CountOfAnswers/Option" + counter).setValue(++count);
-                        }
-                    }
-
-                    counter = 0;
-
-                    for (MutableData n :
-                            mutableData.child("Question2/NameOfAnswers").getChildren()) {
-                        counter++;
-                        if (value2.equals(n.getValue(String.class))) {
-
-                            //Getting count of Answers to increment
-                            int count = mutableData.child("Question2/CountOfAnswers/Option" + counter)
-                                    .getValue(Integer.class);
-
-                            //Setting new data(increment)
-                            mutableData.child("Question2/CountOfAnswers/Option" + counter).setValue(++count);
-                        }
-                    }
+                                try {
+                                    value = mutableData.getValue(Integer.class);
+                                    mutableData.setValue(++value);
+                                } catch (NullPointerException e) {
+                                    Log.e("Error in PollActivity", e.getMessage());
+                                }
 
 
-                    return Transaction.success(mutableData);
-                }
+                                return Transaction.success(mutableData);
+                            }
 
+                            @Override
+                            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
 
-                @Override
-                public void onComplete(DatabaseError databaseError, boolean commited, DataSnapshot dataSnapshot) {
-                    Log.d(String.valueOf(Log.INFO), commited + "");
-                    Log.d("TAG", "postTransaction:onComplete:" + databaseError);
-                }
-            });
+                            }
+                        });
+            }
 
-            Toast.makeText(context, "Answer is sent", Toast.LENGTH_SHORT).show();
+            //Exit activity and show Toast
+            Toast.makeText(context, "Your answer is saved", Toast.LENGTH_SHORT).show();
             setResult(GOOD_RESULT);
             finish();
 

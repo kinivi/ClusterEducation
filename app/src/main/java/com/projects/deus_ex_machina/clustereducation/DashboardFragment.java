@@ -5,11 +5,16 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
@@ -25,6 +30,11 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -37,8 +47,15 @@ import static com.github.mikephil.charting.utils.ColorTemplate.rgb;
 public class DashboardFragment extends Fragment {
 
     private static final int GOOD_RESULT = 12;
+    private static final int NUMBER_OF_CHARTS = 2;
     private PieChart mPieChart;
     private HorizontalBarChart mBarChart;
+    private View rootView;
+    private ArrayList<ArrayList<Pair<String, Integer>>> chartData =
+            new ArrayList<ArrayList<Pair<String, Integer>>>();
+    private ProgressBar progressBar;
+    private ScrollView dashboardLayout;
+    private int dataIsDownLoaded = 0;
 
 
     public DashboardFragment() {
@@ -47,13 +64,81 @@ public class DashboardFragment extends Fragment {
 
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        for (int i = 0; i < 2; i++) {
+            chartData.add(null);
+        }
+
+        DatabaseReference mDataChart = FirebaseDatabase.getInstance().getReference()
+                .child("polls/5a193a33" + "/Question1/CountOfAnswers");
+
+        mDataChart.orderByValue().limitToLast(3).addListenerForSingleValueEvent(new ValueEventListener() {
+
+            ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot data :
+                        dataSnapshot.getChildren()) {
+                    Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
+                    arrayList.add(new Pair<String, Integer>(data.getKey(), data.getValue(Integer.class)));
+                }
+
+                chartData.set(0, arrayList);
+                dataIsDownLoaded++;
+                updateUI();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+        mDataChart = FirebaseDatabase.getInstance().getReference().child("polls/5a193a33" +
+                "/Question2/CountOfAnswers");
+
+        mDataChart.orderByValue().limitToLast(4).addListenerForSingleValueEvent(new ValueEventListener() {
+
+            ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                for (DataSnapshot data :
+                        dataSnapshot.getChildren()) {
+                    Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
+                    arrayList.add(new Pair<String, Integer>(data.getKey(), data.getValue(Integer.class)));
+                }
+
+                chartData.set(1, arrayList);
+                dataIsDownLoaded++;
+                updateUI();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         //Getting the rootView to access standard methods of Activity in Fragment
-        final View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
+        rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
+
 
         //Getting ID of answer button on Card View
         Button buttonAnswerOnCardView = rootView.findViewById(R.id.buttonAnswer);
+
+        progressBar = rootView.findViewById(R.id.progressBar);
+
+        dashboardLayout = rootView.findViewById(R.id.dashboard_layout);
+
 
         //Getting ID's of 2 charts
         mPieChart = (PieChart) rootView.findViewById(R.id.pieChart);
@@ -69,23 +154,33 @@ public class DashboardFragment extends Fragment {
             }
         });
 
-        //Setting fake data for chart
-        setDataForPieChart(4, 85);
-        setDataForBarChart(4, 80);
-
-        //Animate charts
-        mPieChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
-        mBarChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
-
+        updateUI();
 
         return rootView;
     }
 
-    private void setDataForPieChart(int count, int range) {
+    private void updateUI() {
+        if (rootView == null) { // Check if view is already inflated
+            return;
+        }
+
+        //TODO Download data all, not in loop
+
+        if (dataIsDownLoaded >= 2) {
+            // View is already inflated and data is ready - update the view!
+            setDataForPieChart(3, chartData.get(0));
+            setDataForBarChart(3, chartData.get(1));
+
+            progressBar.setVisibility(View.GONE);
+            dashboardLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void setDataForPieChart(int count, ArrayList<Pair<String, Integer>> arrayList) {
         ArrayList<PieEntry> values = new ArrayList<PieEntry>();
 
         for (int i = 0; i < count; i++) {
-            values.add(new PieEntry((float) ((Math.random() * range) + range / 5), "Good"));
+            values.add(new PieEntry((float) arrayList.get(i).second, arrayList.get(i).first));
         }
 
         PieDataSet dataSet = new PieDataSet(values, "Mark of program");
@@ -104,9 +199,10 @@ public class DashboardFragment extends Fragment {
         mPieChart.setData(data);
 
         mPieChart.invalidate();
+        mPieChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
     }
 
-    private void setDataForBarChart(int count, int range) {
+    private void setDataForBarChart(int count, ArrayList<Pair<String, Integer>> arrayList) {
 
         BarData data = new BarData();
 
@@ -116,9 +212,9 @@ public class DashboardFragment extends Fragment {
 
         for (int i = 0; i < count; i++) {
             ArrayList<BarEntry> value = new ArrayList<BarEntry>();
-            value.add(new BarEntry(i + 'f', (float) ((Math.random() * range) + range / 5)));
+            value.add(new BarEntry(i + 'f', (float) arrayList.get(i).second));
 
-            BarDataSet dataSet = new BarDataSet(value, "Subject #" + i);
+            BarDataSet dataSet = new BarDataSet(value, arrayList.get(i).first);
             dataSet.setColors(MATERIAL_COLORS[i]);
             data.addDataSet(dataSet);
 
@@ -128,6 +224,7 @@ public class DashboardFragment extends Fragment {
         mBarChart.setData(data);
 
         mBarChart.invalidate();
+        mBarChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
     }
 
     private void setPieChartAppearance() {
@@ -185,9 +282,12 @@ public class DashboardFragment extends Fragment {
         l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
         l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
         l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        l.setWordWrapEnabled(true);
 
         //sets whether the legend will draw inside the chart or outside
         l.setDrawInside(false);
+
+        l.setWordWrapEnabled(true);
 
         l.setFormSize(10f);
         l.setTextSize(12f);

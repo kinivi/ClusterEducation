@@ -15,6 +15,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 //TODO(2) Add logo
 //TODO(3) Add new colors
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private String mUsername;
+    private DatabaseReference mDatabase;
 
 
     @Override
@@ -34,6 +37,7 @@ public class MainActivity extends AppCompatActivity
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         //-----------------------------Checking Authentication -------------------------
         //Creating Google API for Client
@@ -47,7 +51,6 @@ public class MainActivity extends AppCompatActivity
 //        if (mFirebaseUser == null) {
 //            // Not signed in, launch the Sign In activity
 //            startActivity(new Intent(this, ChooserActivity.class));
-//            finish();
 //        } else {
 //            //Getting username and photo
 //            mUsername = mFirebaseUser.getDisplayName();
@@ -75,10 +78,11 @@ public class MainActivity extends AppCompatActivity
         int[] imageResId = {
                 R.drawable.ic_dashboard_plate,
                 R.drawable.ic_subjects,
-                R.drawable.ic_list };
+                R.drawable.ic_list};
         for (int i = 0; i < imageResId.length; i++) {
             tabLayout.getTabAt(i).setIcon(imageResId[i]);
         }
+
 
     }
 
@@ -123,4 +127,15 @@ public class MainActivity extends AppCompatActivity
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Intent showSplash = new Intent(MainActivity.this, SplashActivity.class);
+
+        MainActivity.this.startActivity(showSplash);
+        MainActivity.this.finish();
+    }
 }
+
+

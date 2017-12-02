@@ -113,7 +113,6 @@ public class ChooserActivity extends AppCompatActivity implements
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             //If sign in succeeds, than going to Main Activity
-                            startActivity(new Intent(ChooserActivity.this, MainActivity.class));
                             finish();
                         }
                     }
