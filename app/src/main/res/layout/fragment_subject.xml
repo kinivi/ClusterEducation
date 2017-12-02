@@ -5,9 +5,142 @@
     tools:context="com.projects.deus_ex_machina.clustereducation.SubjectsFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp">
+                <Button
+                    android:id="@+id/subj_IntroIntoSpeciality"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Intro into Speciality"
+                    android:drawableTop="@drawable/internet_of_things"
+                    android:padding="24dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="#FFEB3B"/>
+                <Button
+                    android:id="@+id/subj_Algorithmisation"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Algorithmization and Programming"
+                    android:drawableTop="@drawable/internet_of_things"
+                    android:padding="24dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="#03A9F4"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/subj_LinearAlgebra"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Linear Algebra and Analythical Gheometry"
+                    android:drawableTop="@drawable/internet_of_things"
+                    android:padding="24dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="#FFEB3B"/>
+                <Button
+                    android:id="@+id/subj_Physics"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Physics"
+                    android:drawableTop="@drawable/internet_of_things"
+                    android:padding="24dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="#03A9F4"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/subj_TeamworkAndPresentation"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Teamwork and Presentation"
+                    android:drawableTop="@drawable/internet_of_things"
+                    android:padding="24dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="#FFEB3B"/>
+                <Button
+                    android:id="@+id/subj_mathAnalysis"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Math Analysis"
+                    android:drawableTop="@drawable/internet_of_things"
+                    android:padding="24dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="#03A9F4"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:orientation="horizontal">
+                <Button
+                    android:id="@+id/subj_HistoryOfUkraine"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="History of Ukraine"
+                    android:drawableTop="@drawable/internet_of_things"
+                    android:padding="24dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="#FFEB3B"/>
+                <Button
+                    android:id="@+id/subj_English"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="English"
+                    android:drawableTop="@drawable/internet_of_things"
+                    android:padding="24dp"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="#03A9F4"/>
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+
 
 </FrameLayout>
