@@ -16,7 +16,6 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
 
             public void run() {
-                //FirebaseDatabase.getInstance().setPersistenceEnabled(false);
                 final Intent mainIntent = new Intent(SplashActivity.this, MainActivity.class);
                 SplashActivity.this.startActivity(mainIntent);
                 SplashActivity.this.finish();
