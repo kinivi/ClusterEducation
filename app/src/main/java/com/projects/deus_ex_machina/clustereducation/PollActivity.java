@@ -22,15 +22,14 @@ import java.util.ArrayList;
 
 public class PollActivity extends AppCompatActivity {
 
-    private static final int COUNT_OF_CARDS = 2;
     private static final int GOOD_RESULT = 12;
     private DatabaseReference mDatabase;
 
-
+    //Edit text values
     EditText editText1;
     EditText editText2;
 
-    //Getting references of RadioGroup views
+    //RadioGroup views values
     RadioGroup group1;
     RadioGroup group2;
 
@@ -54,7 +53,7 @@ public class PollActivity extends AppCompatActivity {
         context = PollActivity.this;
 
         //Getting instance of Database to use it
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("polls/5a193a33");
 
         //Getting references of EditText views
         editText1 = findViewById(R.id.comment_1);
@@ -88,12 +87,12 @@ public class PollActivity extends AppCompatActivity {
 
 
             //Pushing all answer to Database
-            mDatabase.child("polls/5a193a33/EachAnswers").push()
+            mDatabase.child("EachAnswers").push()
                     .setValue(new PollResult(valuesData.get(0), valuesData.get(1), comment1, comment2));
 
             //For each question run transaction
             for (int i = 0; i <= 1; i++) {
-                mDatabase.child("polls/5a193a33/Question" + (i + 1) + "/CountOfAnswers/" + valuesData.get(i))
+                mDatabase.child("Question" + (i + 1) + "/CountOfAnswers/" + valuesData.get(i))
                         .runTransaction(new Transaction.Handler() {
                             @Override
                             public Transaction.Result doTransaction(MutableData mutableData) {

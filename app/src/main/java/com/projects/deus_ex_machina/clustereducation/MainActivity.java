@@ -3,9 +3,14 @@ package com.projects.deus_ex_machina.clustereducation;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -21,7 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 //TODO(2) Add logo
 //TODO(3) Add new colors
 public class MainActivity extends AppCompatActivity
-        implements GoogleApiClient.OnConnectionFailedListener {
+        implements GoogleApiClient.OnConnectionFailedListener,
+        NavigationView.OnNavigationItemSelectedListener {
 
     private static final String ANONYMOUS = "Enroller";
     private GoogleApiClient mGoogleApiClient;
@@ -60,16 +66,29 @@ public class MainActivity extends AppCompatActivity
 //        }
         //------------------------------------------------------------------------------
 
+        //Setting layout for main activity on create
         setContentView(R.layout.activity_main);
-
-        //TODO Decide what to do with it
-        //getSupportActionBar().setElevation(0); Deleting shadows for Status bar
 
         //Getting ID of viewPager and tabLayout
         ViewPager viewPager = findViewById(R.id.viewPager);
         TabLayout tabLayout = findViewById(R.id.tabLayout);
 
+        //Setting toolbar to activity
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
+        //Setting Navigation drawer
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+
+        //Setting Fragment page adapter to View pager
         FragmentPageAdapter adapter = new FragmentPageAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
 
@@ -82,8 +101,6 @@ public class MainActivity extends AppCompatActivity
         for (int i = 0; i < imageResId.length; i++) {
             tabLayout.getTabAt(i).setIcon(imageResId[i]);
         }
-
-
     }
 
 
@@ -95,12 +112,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    /**
-     * Functionality of bottom menu
-     *
-     * @param item
-     * @return what to do
-     */
+    //Implement functionality of menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -118,24 +130,38 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    /**
-     * If connection failed
-     *
-     * @param connectionResult
-     */
+
+    //Show toast if connection failed
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(this, "Google Play Services error.", Toast.LENGTH_SHORT).show();
     }
 
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        Intent showSplash = new Intent(MainActivity.this, SplashActivity.class);
-//
-//        MainActivity.this.startActivity(showSplash);
-//        MainActivity.this.finish();
-//    }
+    //Implement functionality of Navigation Drawer links
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_camera) {
+
+
+        } else if (id == R.id.nav_gallery) {
+
+        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        }
+
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
 }
 
 

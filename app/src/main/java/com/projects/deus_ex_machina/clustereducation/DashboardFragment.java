@@ -47,7 +47,6 @@ import static com.github.mikephil.charting.utils.ColorTemplate.rgb;
 public class DashboardFragment extends Fragment {
 
     private static final int GOOD_RESULT = 12;
-    private static final int NUMBER_OF_CHARTS = 2;
     private PieChart mPieChart;
     private HorizontalBarChart mBarChart;
     private View rootView;
@@ -55,7 +54,7 @@ public class DashboardFragment extends Fragment {
             new ArrayList<ArrayList<Pair<String, Integer>>>();
     private ProgressBar progressBar;
     private ScrollView dashboardLayout;
-    private int dataIsDownLoaded = 0;
+    private int dataIsDownloadedCounter = 0;
 
 
     public DashboardFragment() {
@@ -67,15 +66,22 @@ public class DashboardFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //Initialize array of chartData
         for (int i = 0; i < 2; i++) {
             chartData.add(null);
         }
 
+        //Getting reference to data of chart
         DatabaseReference mDataChart = FirebaseDatabase.getInstance().getReference()
                 .child("polls/5a193a33" + "/Question1/CountOfAnswers");
 
+        //reset chart downloaded data counter
+        dataIsDownloadedCounter = 0;
+
+        //Getting query of chart data ordering by value for Question1
         mDataChart.orderByValue().limitToLast(3).addListenerForSingleValueEvent(new ValueEventListener() {
 
+            //Initialize array of pairs
             ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
 
             @Override
@@ -83,12 +89,19 @@ public class DashboardFragment extends Fragment {
 
                 for (DataSnapshot data :
                         dataSnapshot.getChildren()) {
+
+                    //Logger for debug
                     Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
                     arrayList.add(new Pair<String, Integer>(data.getKey(), data.getValue(Integer.class)));
                 }
 
                 chartData.set(0, arrayList);
-                dataIsDownLoaded++;
+
+                //Increment counter of downloaded data for chart
+                //There are 2 charts, so if counter is < 2 - wait until date will be downloaded
+                dataIsDownloadedCounter++;
+
+                //Update UI
                 updateUI();
             }
 
@@ -97,6 +110,7 @@ public class DashboardFragment extends Fragment {
             }
         });
 
+        //Getting query of chart data ordering by value for Question2
         mDataChart = FirebaseDatabase.getInstance().getReference().child("polls/5a193a33" +
                 "/Question2/CountOfAnswers");
 
@@ -115,7 +129,12 @@ public class DashboardFragment extends Fragment {
                 }
 
                 chartData.set(1, arrayList);
-                dataIsDownLoaded++;
+
+                //Increment counter of downloaded data for chart
+                //There are 2 charts, so if counter is < 2 - wait until date will be downloaded
+                dataIsDownloadedCounter++;
+
+                //Update UI
                 updateUI();
             }
 
@@ -164,14 +183,17 @@ public class DashboardFragment extends Fragment {
             return;
         }
 
-        //TODO Download data all, not in loop
 
-        if (dataIsDownLoaded >= 2) {
+        //TODO Download data all, not in loop
+        if (dataIsDownloadedCounter >= 2) {
             // View is already inflated and data is ready - update the view!
             setDataForPieChart(3, chartData.get(0));
             setDataForBarChart(3, chartData.get(1));
 
+            //hide progress bar
             progressBar.setVisibility(View.GONE);
+
+            //set layout visible
             dashboardLayout.setVisibility(View.VISIBLE);
         }
     }
@@ -183,6 +205,8 @@ public class DashboardFragment extends Fragment {
             values.add(new PieEntry((float) arrayList.get(i).second, arrayList.get(i).first));
         }
 
+        //Setting appearance of Pie chart
+        //-----------------------------------------------------------------------
         PieDataSet dataSet = new PieDataSet(values, "Mark of program");
         dataSet.setSliceSpace(3f);
         dataSet.setSelectionShift(5f);
@@ -195,9 +219,11 @@ public class DashboardFragment extends Fragment {
         data.setValueTextSize(17f);
         data.setValueTextColor(Color.WHITE);
         data.setValueTypeface(Typeface.DEFAULT_BOLD);
+        //-----------------------------------------------------------------------
 
         mPieChart.setData(data);
 
+        //say Pie chart that data is updated and redraw chart
         mPieChart.invalidate();
         mPieChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
     }
@@ -206,6 +232,7 @@ public class DashboardFragment extends Fragment {
 
         BarData data = new BarData();
 
+        //Creating custom array of Material Colors
         int[] MATERIAL_COLORS = {
                 rgb("#2ecc71"), rgb("#f1c40f"), rgb("#e74c3c"), rgb("#3498db")
         };
@@ -223,6 +250,7 @@ public class DashboardFragment extends Fragment {
         data.setValueTextSize(11f);
         mBarChart.setData(data);
 
+        //say Bar chart that data is updated and redraw chart
         mBarChart.invalidate();
         mBarChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
     }
@@ -287,6 +315,7 @@ public class DashboardFragment extends Fragment {
         //sets whether the legend will draw inside the chart or outside
         l.setDrawInside(false);
 
+        //Enable wrap text to a new line
         l.setWordWrapEnabled(true);
 
         l.setFormSize(10f);
