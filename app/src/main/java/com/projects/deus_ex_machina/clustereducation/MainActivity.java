@@ -1,6 +1,9 @@
 package com.projects.deus_ex_machina.clustereducation;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,10 +15,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -25,6 +30,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
 
 //TODO(2) Add logo
 //TODO(3) Add new colors
@@ -39,6 +51,10 @@ public class MainActivity extends AppCompatActivity
     private String mUsername;
     private DatabaseReference mDatabase;
     private Uri mPhotoURI;
+    private String mUserEmail;
+    private NavigationView navigationView;
+
+
 
 
     @Override
@@ -62,8 +78,11 @@ public class MainActivity extends AppCompatActivity
             // Not signed in, launch the Sign In activity
             startActivity(new Intent(this, ChooserActivity.class));
         } else {
-            //Getting username and photo
+            //Getting username, email and photo
             mUsername = mFirebaseUser.getDisplayName();
+            mUserEmail = mFirebaseUser.getEmail();
+            mPhotoURI = null;
+
             if (mFirebaseUser.getPhotoUrl() != null) {
                 mPhotoURI = mFirebaseUser.getPhotoUrl();
             }
@@ -88,8 +107,11 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //Setting navigation drawer appearance
+        setNavAppearance();
 
 
         //Setting Fragment page adapter to View pager
@@ -106,11 +128,45 @@ public class MainActivity extends AppCompatActivity
             tabLayout.getTabAt(i).setIcon(imageResId[i]);
         }
 
-        View headerView = navigationView.inflateHeaderView(R.layout.nav_header_nav_drawer);
-        ImageView profileImage = headerView.findViewById(R.id.profileImage);
-        profileImage.setImageURI(Uri.parse(mPhotoURI.toString()));
+
+
+
+
     }
 
+    private void setNavAppearance(){
+
+        View headerView = navigationView.getHeaderView(0);
+        ImageView imgView = (ImageView) headerView.findViewById(R.id.profileImage);
+
+        // Download photo and set to image
+        Context context = imgView.getContext();
+        Picasso.with(context).load(mPhotoURI).into(imgView);
+
+        TextView name = headerView.findViewById(R.id.user_nav_name);
+        name.setText(mUsername);
+
+        TextView email = headerView.findViewById(R.id.user_nav_email);
+        email.setText(mUserEmail);
+
+    }
+
+    private Bitmap getImageBitmap(String url) {
+        Bitmap bm = null;
+        try {
+            URL aURL = new URL(url);
+            URLConnection conn = aURL.openConnection();
+            conn.connect();
+            InputStream is = conn.getInputStream();
+            BufferedInputStream bis = new BufferedInputStream(is);
+            bm = BitmapFactory.decodeStream(bis);
+            bis.close();
+            is.close();
+        } catch (IOException e) {
+            Log.e("TAG!!!!!!!!!!!!!!!!", "Error getting bitmap", e);
+        }
+        return bm;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
