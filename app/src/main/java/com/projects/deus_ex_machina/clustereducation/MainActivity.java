@@ -1,6 +1,7 @@
 package com.projects.deus_ex_machina.clustereducation;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -13,6 +14,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseUser mFirebaseUser;
     private String mUsername;
     private DatabaseReference mDatabase;
+    private Uri mPhotoURI;
 
 
     @Override
@@ -54,16 +58,16 @@ public class MainActivity extends AppCompatActivity
                 .build();
 
         //Checking if user is signed in
-//        if (mFirebaseUser == null) {
-//            // Not signed in, launch the Sign In activity
-//            startActivity(new Intent(this, ChooserActivity.class));
-//        } else {
-//            //Getting username and photo
-//            mUsername = mFirebaseUser.getDisplayName();
-//            if (mFirebaseUser.getPhotoUrl() != null) {
-//                String mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
-//            }
-//        }
+        if (mFirebaseUser == null) {
+            // Not signed in, launch the Sign In activity
+            startActivity(new Intent(this, ChooserActivity.class));
+        } else {
+            //Getting username and photo
+            mUsername = mFirebaseUser.getDisplayName();
+            if (mFirebaseUser.getPhotoUrl() != null) {
+                mPhotoURI = mFirebaseUser.getPhotoUrl();
+            }
+        }
         //------------------------------------------------------------------------------
 
         //Setting layout for main activity on create
@@ -101,6 +105,10 @@ public class MainActivity extends AppCompatActivity
         for (int i = 0; i < imageResId.length; i++) {
             tabLayout.getTabAt(i).setIcon(imageResId[i]);
         }
+
+        View headerView = navigationView.inflateHeaderView(R.layout.nav_header_nav_drawer);
+        ImageView profileImage = headerView.findViewById(R.id.profileImage);
+        profileImage.setImageURI(Uri.parse(mPhotoURI.toString()));
     }
 
 

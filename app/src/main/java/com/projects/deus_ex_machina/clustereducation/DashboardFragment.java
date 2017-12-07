@@ -160,8 +160,8 @@ public class DashboardFragment extends Fragment {
 
 
         //Getting ID's of 2 charts
-        mPieChart = (PieChart) rootView.findViewById(R.id.pieChart);
-        mBarChart = (HorizontalBarChart) rootView.findViewById(R.id.horizontalBarChart);
+        mPieChart = rootView.findViewById(R.id.pieChart);
+        mBarChart = rootView.findViewById(R.id.horizontalBarChart);
 
         setPieChartAppearance();
         setBarChartAppearance();
