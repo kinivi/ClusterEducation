@@ -1,5 +1,6 @@
 package com.projects.deus_ex_machina.clustereducation;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -27,9 +28,10 @@ public class ChooserActivity extends AppCompatActivity implements
 
     private static final int RC_SIGN_IN = 9001;//Code for Intent (on Activity result)
 
-    //variables for Firebase authentification
+    //variables for Firebase authentication
     private FirebaseAuth mFirebaseAuth;
     private GoogleApiClient mGoogleApiClient;
+    private ProgressDialog progressDialog;
 
 
     @Override
@@ -78,7 +80,15 @@ public class ChooserActivity extends AppCompatActivity implements
                 .build();
 
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+
+        //Setting Progress Dialog
+        progressDialog = new ProgressDialog(ChooserActivity.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Logging in...");
+        progressDialog.show();
+
         startActivityForResult(signInIntent, RC_SIGN_IN);
+
     }
 
     @Override
@@ -94,7 +104,9 @@ public class ChooserActivity extends AppCompatActivity implements
                 GoogleSignInAccount account = result.getSignInAccount();
                 firebaseAuthWithGoogle(account);
             } else {
-                // Google Sign In failed
+                progressDialog.dismiss();
+                Toast.makeText(ChooserActivity.this, "Google Sign in is failed",
+                        Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -112,6 +124,10 @@ public class ChooserActivity extends AppCompatActivity implements
                             Toast.makeText(ChooserActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
+
+                            //finish progress dialog
+                            progressDialog.dismiss();
+
                             //If sign in succeeds, than going to Main Activity
                             finish();
                         }
