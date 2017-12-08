@@ -128,8 +128,12 @@ public class ChooserActivity extends AppCompatActivity implements
                             //finish progress dialog
                             progressDialog.dismiss();
 
-                            //If sign in succeeds, than going to Main Activity
-                            finish();
+                            //Starting MainActivity
+                            Intent mainIntent = new Intent(ChooserActivity.this,
+                                    MainActivity.class);
+
+                            ChooserActivity.this.startActivity(mainIntent);
+                            ChooserActivity.this.finish();
                         }
                     }
                 });
