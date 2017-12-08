@@ -30,6 +30,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -55,6 +56,7 @@ public class DashboardFragment extends Fragment {
     private ProgressBar progressBar;
     private ScrollView dashboardLayout;
     private int dataIsDownloadedCounter = 0;
+    private DatabaseReference mDataChart;
 
 
     public DashboardFragment() {
@@ -66,20 +68,22 @@ public class DashboardFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mDataChart = FirebaseDatabase.getInstance().getReference()
+                .child("polls/5a193a33");
+
         //Initialize array of chartData
         for (int i = 0; i < 2; i++) {
             chartData.add(null);
         }
 
         //Getting reference to data of chart
-        DatabaseReference mDataChart = FirebaseDatabase.getInstance().getReference()
-                .child("polls/5a193a33" + "/Question1/CountOfAnswers");
+        DatabaseReference mDataChartForQuestion1 = mDataChart.child("Question1/CountOfAnswers");
 
         //reset chart downloaded data counter
         dataIsDownloadedCounter = 0;
 
         //Getting query of chart data ordering by value for Question1
-        mDataChart.orderByValue().limitToLast(3).addListenerForSingleValueEvent(new ValueEventListener() {
+        mDataChartForQuestion1.orderByValue().limitToLast(3).addListenerForSingleValueEvent(new ValueEventListener() {
 
             //Initialize array of pairs
             ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
@@ -111,10 +115,9 @@ public class DashboardFragment extends Fragment {
         });
 
         //Getting query of chart data ordering by value for Question2
-        mDataChart = FirebaseDatabase.getInstance().getReference().child("polls/5a193a33" +
-                "/Question2/CountOfAnswers");
+        DatabaseReference mDataChartForQuestion2 = mDataChart.child("Question2/CountOfAnswers");
 
-        mDataChart.orderByValue().limitToLast(4).addListenerForSingleValueEvent(new ValueEventListener() {
+        mDataChartForQuestion2.orderByValue().limitToLast(4).addListenerForSingleValueEvent(new ValueEventListener() {
 
             ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
 
@@ -136,6 +139,8 @@ public class DashboardFragment extends Fragment {
 
                 //Update UI
                 updateUI();
+
+
             }
 
             @Override
@@ -174,6 +179,12 @@ public class DashboardFragment extends Fragment {
         });
 
         updateUI();
+
+        mPieChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
+        mBarChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
+
+        
+
 
         return rootView;
     }
@@ -225,7 +236,6 @@ public class DashboardFragment extends Fragment {
 
         //say Pie chart that data is updated and redraw chart
         mPieChart.invalidate();
-        mPieChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
     }
 
     private void setDataForBarChart(int count, ArrayList<Pair<String, Integer>> arrayList) {
@@ -252,7 +262,6 @@ public class DashboardFragment extends Fragment {
 
         //say Bar chart that data is updated and redraw chart
         mBarChart.invalidate();
-        mBarChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
     }
 
     private void setPieChartAppearance() {
