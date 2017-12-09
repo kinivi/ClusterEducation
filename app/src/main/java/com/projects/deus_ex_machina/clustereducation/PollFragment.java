@@ -2,9 +2,11 @@ package com.projects.deus_ex_machina.clustereducation;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -20,8 +22,9 @@ import com.google.firebase.database.Transaction;
 
 import java.util.ArrayList;
 
-public class PollActivity extends AppCompatActivity {
+public class PollFragment extends Fragment {
 
+    private View rootView;
     private static final int GOOD_RESULT = 12;
     private DatabaseReference mDatabase;
 
@@ -39,34 +42,37 @@ public class PollActivity extends AppCompatActivity {
     //Context for using Toast
     Context context;
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    public PollFragment() {
+        // Required empty public constructor
     }
 
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_poll);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        rootView =  inflater.inflate(R.layout.fragment_poll, container, false);
 
         //Getting context
-        context = PollActivity.this;
+        context = rootView.getContext();
 
         //Getting instance of Database to use it
         mDatabase = FirebaseDatabase.getInstance().getReference().child("polls/5a193a33");
 
         //Getting references of EditText views
-        editText1 = findViewById(R.id.comment_1);
-        editText2 = findViewById(R.id.comment_2);
+        editText1 = rootView.findViewById(R.id.comment_1);
+        editText2 = rootView.findViewById(R.id.comment_2);
 
         //Getting references of RadioGroup views
-        group1 = findViewById(R.id.radioGroup1);
-        group2 = findViewById(R.id.radioGroup2);
+        group1 = rootView.findViewById(R.id.radioGroup1);
+        group2 = rootView.findViewById(R.id.radioGroup2);
 
         //Getting references of Button to process onClickListener
-        buttonSend = findViewById(R.id.button_send);
+        buttonSend = rootView.findViewById(R.id.button_send);
 
         buttonSend.setOnClickListener(listenerToSendButton);
+
+        return rootView;
     }
 
     View.OnClickListener listenerToSendButton = new View.OnClickListener() {
@@ -79,10 +85,10 @@ public class PollActivity extends AppCompatActivity {
             //Array of answers for each question
             ArrayList<String> valuesData = new ArrayList<String>();
 
-            valuesData.add(String.valueOf(((RadioButton) findViewById(group1.getCheckedRadioButtonId()))
+            valuesData.add(String.valueOf(((RadioButton) rootView.findViewById(group1.getCheckedRadioButtonId()))
                     .getText()));
 
-            valuesData.add(String.valueOf(((RadioButton) findViewById(group2.getCheckedRadioButtonId()))
+            valuesData.add(String.valueOf(((RadioButton) rootView.findViewById(group2.getCheckedRadioButtonId()))
                     .getText()));
 
 
@@ -103,7 +109,7 @@ public class PollActivity extends AppCompatActivity {
                                     value = mutableData.getValue(Integer.class);
                                     mutableData.setValue(++value);
                                 } catch (NullPointerException e) {
-                                    Log.e("Error in PollActivity", e.getMessage());
+                                    Log.e("Error BackButtonActiv", e.getMessage());
                                 }
 
 
@@ -119,12 +125,9 @@ public class PollActivity extends AppCompatActivity {
 
             //Exit activity and show Toast
             Toast.makeText(context, "Your answer is saved", Toast.LENGTH_SHORT).show();
-            setResult(GOOD_RESULT);
-            finish();
+            getActivity().setResult(GOOD_RESULT);
+            getActivity().finish();
 
         }
     };
 }
-
-
-

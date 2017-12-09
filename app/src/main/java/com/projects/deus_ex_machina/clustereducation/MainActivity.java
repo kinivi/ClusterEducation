@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity
     private Uri mPhotoURI;
     private String mUserEmail;
     private NavigationView navigationView;
+    private int prevID = 0;
 
 
     @Override
@@ -174,7 +175,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-
+            prevID = id;
 
         } else if (id == R.id.nav_gallery) {
 
@@ -184,7 +185,13 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_share) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_send && prevID != id) {
+
+            prevID = id;
+
+            Intent intent = new Intent(this, BackButtonActivity.class);
+            intent.putExtra("TypeOfFragment", "FeedbackFragment");
+            startActivity(intent);
 
         }
 

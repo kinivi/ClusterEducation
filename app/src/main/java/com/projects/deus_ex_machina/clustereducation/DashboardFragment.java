@@ -153,7 +153,7 @@ public class DashboardFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         //Getting the rootView to access standard methods of Activity in Fragment
@@ -178,7 +178,9 @@ public class DashboardFragment extends Fragment {
         buttonAnswerOnCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivityForResult(new Intent(rootView.getContext(), PollActivity.class), GOOD_RESULT);
+                Intent intent = new Intent(rootView.getContext(), BackButtonActivity.class);
+                intent.putExtra("TypeOfFragment", "PollFragment");
+                startActivityForResult(intent, GOOD_RESULT);
             }
         });
 
