@@ -4,11 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -46,10 +46,11 @@ public class MainActivity extends AppCompatActivity
     private NavigationView navigationView;
     private int prevID = 0;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        prevID = R.id.nav_dashboard;
 
         mFirebaseAuth = FirebaseAuth.getInstance();
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
@@ -57,9 +58,9 @@ public class MainActivity extends AppCompatActivity
 
         //--------------------Building Google API and retrieving data about user ----------------
         //Creating Google API for Client
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .enableAutoManage(this /* FragmentActivity */,
-                        this /* OnConnectionFailedListener */)
+        mGoogleApiClient = new GoogleApiClient.Builder(MainActivity.this)
+                .enableAutoManage(MainActivity.this /* FragmentActivity */,
+                        MainActivity.this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API)
                 .build();
 
@@ -75,9 +76,9 @@ public class MainActivity extends AppCompatActivity
         //Setting layout for main activity on create
         setContentView(R.layout.activity_main);
 
-        //Getting ID of viewPager and tabLayout
-        ViewPager viewPager = findViewById(R.id.viewPager);
-        TabLayout tabLayout = findViewById(R.id.tabLayout);
+        //Inflate MainFragment to Activity
+        setMainFragment();
+
 
         //Setting toolbar to activity
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -90,25 +91,12 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         //Setting navigation drawer appearance
         setNavigationDrawerAppearance();
-
-        //Setting Fragment page adapter to View pager
-        FragmentPageAdapter adapter = new FragmentPageAdapter(getSupportFragmentManager());
-        viewPager.setAdapter(adapter);
-
-        //setting icons for TabLayout
-        tabLayout.setupWithViewPager(viewPager);
-        int[] imageResId = {
-                R.drawable.ic_dashboard_plate,
-                R.drawable.ic_subjects,
-                R.drawable.ic_list};
-        for (int i = 0; i < imageResId.length; i++) {
-            tabLayout.getTabAt(i).setIcon(imageResId[i]);
-        }
     }
 
     private void setNavigationDrawerAppearance() {
@@ -174,8 +162,15 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_dashboard && prevID != id) {
+
             prevID = id;
+            new Handler().postDelayed(new Runnable() {
+
+                public void run() {
+                    setMainFragment();
+                }
+            }, 300);
 
         } else if (id == R.id.nav_gallery) {
 
@@ -187,17 +182,32 @@ public class MainActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_send && prevID != id) {
 
+            new Handler().postDelayed(new Runnable() {
+
+                public void run() {
+                    Intent intent = new Intent(MainActivity.this, BackButtonActivity.class);
+                    intent.putExtra("TypeOfFragment", "FeedbackFragment");
+                    startActivity(intent);
+                }
+            }, 300);
             prevID = id;
 
-            Intent intent = new Intent(this, BackButtonActivity.class);
-            intent.putExtra("TypeOfFragment", "FeedbackFragment");
-            startActivity(intent);
 
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void setMainFragment() {
+        getSupportFragmentManager().popBackStack();
+        getSupportFragmentManager().beginTransaction()
+                .setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .replace(R.id.dynamic_content_container, new MainFragment())
+                .disallowAddToBackStack()
+                .commit();
+
     }
 }
 
