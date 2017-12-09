@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
@@ -57,6 +58,8 @@ public class DashboardFragment extends Fragment {
     private ScrollView dashboardLayout;
     private int dataIsDownloadedCounter = 0;
     private DatabaseReference mDataChart;
+    private ChildEventListener listenerForQuestion1;
+    private ChildEventListener listenerForQuestion2;
 
 
     public DashboardFragment() {
@@ -83,7 +86,7 @@ public class DashboardFragment extends Fragment {
         dataIsDownloadedCounter = 0;
 
         //Getting query of chart data ordering by value for Question1
-        mDataChartForQuestion1.orderByValue().limitToLast(3).addListenerForSingleValueEvent(new ValueEventListener() {
+        mDataChartForQuestion1.orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
 
             //Initialize array of pairs
             ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
@@ -117,7 +120,7 @@ public class DashboardFragment extends Fragment {
         //Getting query of chart data ordering by value for Question2
         DatabaseReference mDataChartForQuestion2 = mDataChart.child("Question2/CountOfAnswers");
 
-        mDataChartForQuestion2.orderByValue().limitToLast(4).addListenerForSingleValueEvent(new ValueEventListener() {
+        mDataChartForQuestion2.orderByValue().limitToLast(3).addListenerForSingleValueEvent(new ValueEventListener() {
 
             ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
 
@@ -152,6 +155,7 @@ public class DashboardFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         //Getting the rootView to access standard methods of Activity in Fragment
         rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
@@ -183,7 +187,7 @@ public class DashboardFragment extends Fragment {
         mPieChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
         mBarChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
 
-        
+        setValueListenersToCharts();
 
 
         return rootView;
@@ -198,8 +202,8 @@ public class DashboardFragment extends Fragment {
         //TODO Download data all, not in loop
         if (dataIsDownloadedCounter >= 2) {
             // View is already inflated and data is ready - update the view!
-            setDataForPieChart(3, chartData.get(0));
-            setDataForBarChart(3, chartData.get(1));
+            setDataForPieChart(chartData.get(0));
+            setDataForBarChart(chartData.get(1));
 
             //hide progress bar
             progressBar.setVisibility(View.GONE);
@@ -207,12 +211,134 @@ public class DashboardFragment extends Fragment {
             //set layout visible
             dashboardLayout.setVisibility(View.VISIBLE);
         }
+
     }
 
-    private void setDataForPieChart(int count, ArrayList<Pair<String, Integer>> arrayList) {
+    private void setValueListenersToCharts(){
+        listenerForQuestion1 = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                //Getting reference to data of chart
+                DatabaseReference mDataChartForQuestion1 = mDataChart.child("Question1/CountOfAnswers");
+
+                //Getting query of chart data ordering by value for Question1
+                mDataChartForQuestion1.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                            //Initialize array of pairs
+                            ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
+
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                for (DataSnapshot data :
+                                        dataSnapshot.getChildren()) {
+
+                                    //Logger for debug
+                                    Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
+                                    arrayList.add(new Pair<String, Integer>(data.getKey(), data.getValue(Integer.class)));
+                                }
+
+                                chartData.set(0, arrayList);
+
+                                //Update UI
+                                updateUI();
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Toast.makeText(rootView.getContext(), "Database error in realtime update", Toast.LENGTH_SHORT)
+                                        .show();
+                            }
+                        });
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        listenerForQuestion2 = new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                //Getting query of chart data ordering by value for Question2
+                DatabaseReference mDataChartForQuestion2 = mDataChart.child("Question2/CountOfAnswers");
+
+                mDataChartForQuestion2.orderByValue().limitToLast(3).addListenerForSingleValueEvent(new ValueEventListener() {
+
+                    ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
+
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                        for (DataSnapshot data :
+                                dataSnapshot.getChildren()) {
+                            Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
+                            arrayList.add(new Pair<String, Integer>(data.getKey(), data.getValue(Integer.class)));
+                        }
+
+                        chartData.set(1, arrayList);
+
+                        //Update UI
+                        updateUI();
+
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        mDataChart.child("Question1").addChildEventListener(listenerForQuestion1);
+
+        mDataChart.child("Question2").addChildEventListener(listenerForQuestion2);
+    }
+
+    private void setDataForPieChart(ArrayList<Pair<String, Integer>> arrayList) {
         ArrayList<PieEntry> values = new ArrayList<PieEntry>();
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < arrayList.size(); i++) {
             values.add(new PieEntry((float) arrayList.get(i).second, arrayList.get(i).first));
         }
 
@@ -238,7 +364,7 @@ public class DashboardFragment extends Fragment {
         mPieChart.invalidate();
     }
 
-    private void setDataForBarChart(int count, ArrayList<Pair<String, Integer>> arrayList) {
+    private void setDataForBarChart(ArrayList<Pair<String, Integer>> arrayList) {
 
         BarData data = new BarData();
 
@@ -247,7 +373,7 @@ public class DashboardFragment extends Fragment {
                 rgb("#2ecc71"), rgb("#f1c40f"), rgb("#e74c3c"), rgb("#3498db")
         };
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < arrayList.size(); i++) {
             ArrayList<BarEntry> value = new ArrayList<BarEntry>();
             value.add(new BarEntry(i + 'f', (float) arrayList.get(i).second));
 
@@ -259,6 +385,9 @@ public class DashboardFragment extends Fragment {
 
         data.setValueTextSize(11f);
         mBarChart.setData(data);
+
+        //Deny selection
+        mBarChart.setSelected(false);
 
         //say Bar chart that data is updated and redraw chart
         mBarChart.invalidate();
@@ -342,4 +471,10 @@ public class DashboardFragment extends Fragment {
         y.setAxisMinimum(0f);
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mDataChart.child("Question1").removeEventListener(listenerForQuestion1);
+        mDataChart.child("Question1").removeEventListener(listenerForQuestion2);
+    }
 }
