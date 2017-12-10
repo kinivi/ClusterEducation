@@ -131,9 +131,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        Intent showSplash = new Intent(MainActivity.this, SplashActivity.class);
-
-        MainActivity.this.startActivity(showSplash);
         MainActivity.this.finish();
     }
 }

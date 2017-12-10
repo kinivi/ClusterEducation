@@ -6,6 +6,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:numColumns="2"
+    android:horizontalSpacing="3dp"
+    android:verticalSpacing="3dp"
+    android:background="@color/colorPrimaryDark"
     tools:context="com.projects.deus_ex_machina.clustereducation.SubjectsFragment"
     android:id="@+id/subject_grid_view">
 
