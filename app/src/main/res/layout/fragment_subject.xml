@@ -9,7 +9,7 @@
     android:numColumns="2"
     android:horizontalSpacing="3dp"
     android:verticalSpacing="3dp"
-    android:background="@color/colorPrimaryDark"
+    android:background="@color/colorPrimary"
     tools:context="com.projects.deus_ex_machina.clustereducation.SubjectsFragment"
     android:id="@+id/subject_grid_view">
 

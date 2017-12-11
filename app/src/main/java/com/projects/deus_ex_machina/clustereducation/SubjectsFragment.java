@@ -32,14 +32,14 @@ public class SubjectsFragment extends Fragment {
         //Array of objects containing icons and subject names
         ArrayList<SubjectCard> subjects = new ArrayList<>();
 
-        subjects.add(new SubjectCard("History of Ukraine", R.drawable.internet_of_things));
-        subjects.add(new SubjectCard("History of Ukraine", R.drawable.internet_of_things));
-        subjects.add(new SubjectCard("History of Ukraine", R.drawable.internet_of_things));
-        subjects.add(new SubjectCard("History of Ukraine", R.drawable.internet_of_things));
-        subjects.add(new SubjectCard("History of Ukraine", R.drawable.internet_of_things));
-        subjects.add(new SubjectCard("History of Ukraine", R.drawable.internet_of_things));
-        subjects.add(new SubjectCard("History of Ukraine", R.drawable.internet_of_things));
-        subjects.add(new SubjectCard("History of Ukraine", R.drawable.internet_of_things));
+        subjects.add(new SubjectCard("English", R.drawable.ic_subject_english));
+        subjects.add(new SubjectCard("History of Ukraine", R.drawable.ic_subject_history));
+        subjects.add(new SubjectCard("Intro to Specialty", R.drawable.ic_subject_intro_to_specialty));
+        subjects.add(new SubjectCard("Linear Algebra", R.drawable.ic_subject_linear_algebra));
+        subjects.add(new SubjectCard("Math Analysis", R.drawable.ic_subject_math_analysis));
+        subjects.add(new SubjectCard("Physics", R.drawable.ic_subject_physics));
+        subjects.add(new SubjectCard("Programming", R.drawable.ic_subject_programming));
+        subjects.add(new SubjectCard("Teamwork and presentation skills", R.drawable.ic_subject_teamwork));
 
         SubjectCardAdapter subjectCardAdapter = new SubjectCardAdapter(getActivity(), subjects);
 
