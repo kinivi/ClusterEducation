@@ -1,0 +1,62 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.projects.deus_ex_machina.clustereducation.PollFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="History of Ukraine"
+                android:gravity="center_horizontal"
+                android:textAllCaps="true"
+                android:textSize="26sp"
+                android:layout_marginTop="24dp"/>
+            <RatingBar
+                android:id="@+id/rating_bar"
+                style="?android:attr/ratingBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:numStars="5"
+                android:rating="4.5"
+                android:stepSize="0.5"
+                android:layout_marginTop="14dp" />
+
+            <EditText
+                android:id="@+id/message"
+                android:layout_width="match_parent"
+                android:layout_height="180dp"
+                android:inputType=
+                    "textCapSentences|textAutoCorrect"
+                android:background="@drawable/card"
+                android:textAlignment="textStart"
+                android:gravity="start"
+                android:hint="Add your comment here"
+                android:layout_marginTop="14dp"
+                android:layout_marginBottom="14dp"
+                />
+
+            <Button
+                android:id="@+id/button_send"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:text="SEND"
+                android:textColor="#FFFFFF" />
+
+        </LinearLayout>
+
+    </ScrollView>
+</FrameLayout>
