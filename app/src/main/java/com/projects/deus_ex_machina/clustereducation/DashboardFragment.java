@@ -13,10 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
+import com.androidadvance.androidsurvey.SurveyActivity;
+import com.androidadvance.androidsurvey.models.SurveyPojo;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -37,9 +40,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
+import static android.app.Activity.RESULT_OK;
 import static com.github.mikephil.charting.utils.ColorTemplate.rgb;
 
 
@@ -60,10 +70,25 @@ public class DashboardFragment extends Fragment {
     private DatabaseReference mDataChart;
     private ChildEventListener listenerForQuestion1;
     private ChildEventListener listenerForQuestion2;
+    private static final int SURVEY_REQUEST = 1337;
 
 
     public DashboardFragment() {
         // Required empty public constructor
+    }
+
+    private String loadSurveyJson(String filename) {
+        try {
+            InputStream is = rootView.getContext().getAssets().open(filename);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            return new String(buffer, "UTF-8");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
 
@@ -178,9 +203,25 @@ public class DashboardFragment extends Fragment {
         buttonAnswerOnCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(rootView.getContext(), BackButtonActivity.class);
-                intent.putExtra("TypeOfFragment", "PollFragment");
-                startActivityForResult(intent, GOOD_RESULT);
+//                Intent intent = new Intent(rootView.getContext(), BackButtonActivity.class);
+//                intent.putExtra("TypeOfFragment", "PollFragment");
+//                startActivityForResult(intent, GOOD_RESULT);
+
+                SurveyPojo pojo = new SurveyConstructor().get();
+
+                Gson gson = new Gson();
+                String json = gson.toJson(pojo);
+
+                Log.d("TAG", json);
+
+                Intent i_survey = new Intent(rootView.getContext(), SurveyActivity.class);
+                i_survey.putExtra("json_survey", json);
+
+                startActivityForResult(i_survey, SURVEY_REQUEST);
+
+
+
+                //FirebaseDatabase.getInstance().getReference().push().setValue(new SurveyConstructor().get());
             }
         });
 
@@ -190,9 +231,53 @@ public class DashboardFragment extends Fragment {
         mBarChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
 
         setValueListenersToCharts();
+        ListView listView = rootView.findViewById(R.id.list_of_polls);
+
+//        ListAdapter adapter =
+//                new FirebaseListAdapter<PollClass>(getActivity(), PollClass.class, R.layout.card_view_for_poll,
+//                        FirebaseDatabase.getInstance().getReference().child("polls_preview")) {
+//
+//                    @Override
+//                    protected void populateView(View v, PollClass model, int position) {
+//                        TextView view = v.findViewById(R.id.cardTitle);
+//                        view.setText(model.getTitle());
+//                    }
+//                };
+//        listView.setAdapter(adapter);
+
+
 
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        String str;
+            if (requestCode == SURVEY_REQUEST) {
+                if (resultCode == RESULT_OK) {
+
+                    String answers_json = data.getExtras().getString("answers");
+                    Log.d("****", "****************** WE HAVE ANSWERS ******************");
+                    Log.v("ANSWERS JSON", answers_json);
+                    Log.d("****", "*****************************************************");
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(answers_json);
+
+                        
+
+
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    //do whatever you want with them...
+                }
+            }
+
     }
 
     private void updateUI() {

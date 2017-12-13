@@ -170,9 +170,18 @@ public class MainActivity extends AppCompatActivity
                 public void run() {
                     setMainFragment();
                 }
-            }, 300);
+            }, 200);
 
         } else if (id == R.id.nav_gallery) {
+            prevID = id;
+            new Handler().postDelayed(new Runnable() {
+
+                public void run() {
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.dynamic_content_container, new PollConstructor()).commit();
+                }
+            }, 200);
+
 
         } else if (id == R.id.nav_slideshow) {
 
@@ -189,7 +198,7 @@ public class MainActivity extends AppCompatActivity
                     intent.putExtra("TypeOfFragment", "FeedbackFragment");
                     startActivity(intent);
                 }
-            }, 300);
+            }, 200);
             prevID = id;
 
 

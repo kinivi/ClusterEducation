@@ -40,6 +40,15 @@ dependencies {
 
     //Picasso repo
     compile 'com.squareup.picasso:picasso:2.5.2'
+
+    compile 'com.firebase:firebase-client-android:2.5.0'
+    compile 'com.firebaseui:firebase-ui:0.4.3'
+
+    //Survey library
+    compile 'com.androidadvance.surveylib:surveylib:0.0.1'
+
+    //JSON
+    compile 'com.google.code.gson:gson:2.8.2'
 }
 apply plugin: 'com.google.gms.google-services'
 

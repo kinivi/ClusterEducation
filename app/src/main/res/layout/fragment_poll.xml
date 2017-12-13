@@ -66,7 +66,7 @@
 
 
                     <RadioGroup
-                        android:id="@+id/radioGroup1"
+                        android:id="@+id/type_of_answers"
                         android:layout_width="344dp"
                         android:layout_height="200dp"
                         android:layout_marginStart="16dp"
@@ -129,7 +129,7 @@
                         app:layout_constraintHeight_min="40dp"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/radioGroup1"
+                        app:layout_constraintTop_toBottomOf="@+id/type_of_answers"
                         app:layout_constraintVertical_bias="0.3">
 
                         <android.support.design.widget.TextInputEditText
@@ -318,7 +318,7 @@
             <!--android:layout_height="18dp"-->
             <!--android:layout_marginStart="16dp"-->
             <!--android:layout_marginTop="8dp"-->
-            <!--android:text="Question #3"-->
+            <!--android:teSurveytion #3"-->
             <!--app:layout_constraintStart_toStartOf="parent"-->
             <!--app:layout_constraintTop_toTopOf="parent" />-->
 
@@ -445,7 +445,7 @@
             <!--android:layout_height="18dp"-->
             <!--android:layout_marginStart="16dp"-->
             <!--android:layout_marginTop="8dp"-->
-            <!--android:text="Question #4"-->
+            <!--android:teSurveytion #4"-->
             <!--app:layout_constraintStart_toStartOf="parent"-->
             <!--app:layout_constraintTop_toTopOf="parent" />-->
 
@@ -572,7 +572,7 @@
             <!--android:layout_height="18dp"-->
             <!--android:layout_marginStart="16dp"-->
             <!--android:layout_marginTop="8dp"-->
-            <!--android:text="Question #5"-->
+            <!--android:teSurveytion #5"-->
             <!--app:layout_constraintStart_toStartOf="parent"-->
             <!--app:layout_constraintTop_toTopOf="parent" />-->
 
