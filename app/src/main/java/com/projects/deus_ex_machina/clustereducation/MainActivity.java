@@ -182,7 +182,6 @@ public class MainActivity extends AppCompatActivity
                 }
             }, 200);
 
-
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {

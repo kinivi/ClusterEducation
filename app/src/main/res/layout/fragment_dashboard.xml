@@ -89,13 +89,15 @@
 
             <include layout="@layout/card_view_for_poll" />
 
-            <ListView
+            <com.projects.deus_ex_machina.clustereducation.PollListView
+                android:id="@+id/list_of_polls"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/list_of_polls"
+                android:clipChildren="false"
+                android:clipToPadding="false"
                 >
 
-            </ListView>
+            </com.projects.deus_ex_machina.clustereducation.PollListView>
 
 
 
