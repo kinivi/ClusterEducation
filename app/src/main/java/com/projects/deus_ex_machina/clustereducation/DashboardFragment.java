@@ -12,13 +12,13 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidadvance.androidsurvey.models.SurveyPojo;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
 import com.github.mikephil.charting.animation.Easing;
@@ -74,6 +74,7 @@ public class DashboardFragment extends Fragment {
     private ChildEventListener listenerForQuestion1;
     private ChildEventListener listenerForQuestion2;
     private static final int SURVEY_REQUEST = 1337;
+    private FirebaseListAdapter<SurveyPojo> adapter;
 
 
     public DashboardFragment() {
@@ -188,9 +189,6 @@ public class DashboardFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
 
-        //Getting ID of answer button on Card View
-        Button buttonAnswerOnCardView = rootView.findViewById(R.id.buttonAnswer);
-
         progressBar = rootView.findViewById(R.id.progressBar);
 
         dashboardLayout = rootView.findViewById(R.id.dashboard_layout);
@@ -204,56 +202,58 @@ public class DashboardFragment extends Fragment {
         setBarChartAppearance();
 
         final ListView listView = rootView.findViewById(R.id.list_of_polls);
-        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child("values");
+        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child("polls");
 
         Query query = mRef.orderByKey();
 
 
-        FirebaseListOptions<String> options = new FirebaseListOptions.Builder<String>()
-                .setLayout(R.layout.card_view_for_poll)//Note: The guide doesn't mention this method, without it an exception is thrown that the layout has to be set.
-                .setQuery(query, String.class)
-                .setLifecycleOwner(this)
+        FirebaseListOptions<SurveyPojo> options = new FirebaseListOptions.Builder<SurveyPojo>()
+                .setLayout(R.layout.card_view_for_poll)
+                .setQuery(query, SurveyPojo.class)
                 .build();
 
 
-        FirebaseListAdapter<String> adapter = new FirebaseListAdapter<String>(options) {
+        adapter = new FirebaseListAdapter<SurveyPojo>(options) {
             @Override
-            protected void populateView(View v, String model, int position) {
-                ((TextView) v.findViewById(R.id.cardTitle)).setText(model);
+            protected void populateView(View v, SurveyPojo model, int position) {
+                String title = model.getSurveyProperties().getTitle();
+                String subTitle = model.getSurveyProperties().getIntroMessage();
+
+                ((TextView) v.findViewById(R.id.cardTitle)).setText(title);
+                ((TextView) v.findViewById(R.id.cardSubtitle)).setText(subTitle);
 
             }
         };
 
         adapter.startListening();
-
         listView.setAdapter(adapter);
 
 
-        buttonAnswerOnCardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                Intent intent = new Intent(rootView.getContext(), BackButtonActivity.class);
-//                intent.putExtra("TypeOfFragment", "PollFragment");
-//                startActivityForResult(intent, GOOD_RESULT);
-
-//                SurveyPojo pojo = new SurveyConstructor().get();
+//        buttonAnswerOnCardView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                Intent intent = new Intent(rootView.getContext(), BackButtonActivity.class);
+////                intent.putExtra("TypeOfFragment", "PollFragment");
+////                startActivityForResult(intent, GOOD_RESULT);
 //
-//                Gson gson = new Gson();
-//                String json = gson.toJson(pojo);
+////                SurveyPojo pojo = new SurveyConstructor().get();
+////
+////                Gson gson = new Gson();
+////                String json = gson.toJson(pojo);
+////
+////                Log.d("TAG", json);
+////
+////                Intent i_survey = new Intent(rootView.getContext(), SurveyActivity.class);
+////                i_survey.putExtra("json_survey", json);
+////
+////                startActivityForResult(i_survey, SURVEY_REQUEST);
 //
-//                Log.d("TAG", json);
+//                Log.d("AAA", String.valueOf(listView.getCount()));
 //
-//                Intent i_survey = new Intent(rootView.getContext(), SurveyActivity.class);
-//                i_survey.putExtra("json_survey", json);
 //
-//                startActivityForResult(i_survey, SURVEY_REQUEST);
-
-                Log.d("AAA", String.valueOf(listView.getCount()));
-
-
-                //FirebaseDatabase.getInstance().getReference().push().setValue(new SurveyConstructor().get());
-            }
-        });
+//                //FirebaseDatabase.getInstance().getReference().push().setValue(new SurveyConstructor().get());
+//            }
+//        });
 
         updateUI();
 
@@ -578,8 +578,22 @@ public class DashboardFragment extends Fragment {
 
     @Override
     public void onDestroy() {
+        adapter.stopListening();
         super.onDestroy();
-        mDataChart.child("Question1").removeEventListener(listenerForQuestion1);
-        mDataChart.child("Question1").removeEventListener(listenerForQuestion2);
+
+//        mDataChart.child("Question1").removeEventListener(listenerForQuestion1);
+  //      mDataChart.child("Question1").removeEventListener(listenerForQuestion2);
+    }
+
+    @Override
+    public void onStart() {
+        adapter.startListening();
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        adapter.stopListening();
+        super.onStop();
     }
 }
