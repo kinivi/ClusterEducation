@@ -12,12 +12,14 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidadvance.androidsurvey.SurveyActivity;
 import com.androidadvance.androidsurvey.models.SurveyPojo;
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.firebase.ui.database.FirebaseListOptions;
@@ -44,13 +46,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import static android.app.Activity.RESULT_OK;
 import static com.github.mikephil.charting.utils.ColorTemplate.rgb;
@@ -215,12 +213,33 @@ public class DashboardFragment extends Fragment {
 
         adapter = new FirebaseListAdapter<SurveyPojo>(options) {
             @Override
-            protected void populateView(View v, SurveyPojo model, int position) {
+            protected void populateView(View v, final SurveyPojo model, int position) {
                 String title = model.getSurveyProperties().getTitle();
                 String subTitle = model.getSurveyProperties().getIntroMessage();
 
                 ((TextView) v.findViewById(R.id.cardTitle)).setText(title);
                 ((TextView) v.findViewById(R.id.cardSubtitle)).setText(subTitle);
+
+                ((Button) v.findViewById(R.id.buttonAnswer)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Intent intent = new Intent(rootView.getContext(), SurveyActivity.class);
+                        intent.putExtra("TypeOfFragment", "PollFragment");
+                        startActivityForResult(intent, GOOD_RESULT);
+
+                        Gson gson = new Gson();
+                        String json = gson.toJson(model);
+
+                        Intent i_survey = new Intent(rootView.getContext(), SurveyActivity.class);
+                        i_survey.putExtra("json_survey", json);
+
+                        startActivityForResult(i_survey, SURVEY_REQUEST);
+
+
+                        //FirebaseDatabase.getInstance().getReference().push().setValue(new SurveyConstructor().get());
+                    }
+                });
 
             }
         };
@@ -268,33 +287,31 @@ public class DashboardFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         String str;
-            if (requestCode == SURVEY_REQUEST) {
-                if (resultCode == RESULT_OK) {
+        if (requestCode == SURVEY_REQUEST) {
+            if (resultCode == RESULT_OK) {
 
-                    String answers_json = data.getExtras().getString("answers");
-                    Log.d("****", "****************** WE HAVE ANSWERS ******************");
-                    Log.v("ANSWERS JSON", answers_json);
-                    Log.d("****", "*****************************************************");
-
-                    Gson gson = new Gson();
-
-                    try {
-                        JSONObject jsonObject = new JSONObject(answers_json);
-                        for (Iterator<String> it = jsonObject.keys(); it.hasNext(); ) {
-                            String key = it.next();
+                String answers_json = data.getExtras().getString("answers");
+                Log.d("****", "****************** WE HAVE ANSWERS ******************");
+                Log.v("ANSWERS JSON", answers_json);
+                Log.d("****", "*****************************************************");
 
 
-                        }
-                        FirebaseDatabase.getInstance().getReference().child("values")
-                                .setValue(jsonObject);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+//                try {
+//                    JSONObject jsonObject = new JSONObject(answers_json);
+//                    for (Iterator<String> it = jsonObject.keys(); it.hasNext(); ) {
+//                        String key = it.next();
+//
+//
+//                    }
+//                    FirebaseDatabase.getInstance().getReference().child("values")
+//                            .setValue(jsonObject);
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
 
 
-
-                }
             }
+        }
 
     }
 
@@ -319,7 +336,7 @@ public class DashboardFragment extends Fragment {
 
     }
 
-    private void setValueListenersToCharts(){
+    private void setValueListenersToCharts() {
         listenerForQuestion1 = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -335,32 +352,32 @@ public class DashboardFragment extends Fragment {
                 //Getting query of chart data ordering by value for Question1
                 mDataChartForQuestion1.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                            //Initialize array of pairs
-                            ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
+                    //Initialize array of pairs
+                    ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
 
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                for (DataSnapshot data :
-                                        dataSnapshot.getChildren()) {
+                        for (DataSnapshot data :
+                                dataSnapshot.getChildren()) {
 
-                                    //Logger for debug
-                                    Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
-                                    arrayList.add(new Pair<String, Integer>(data.getKey(), data.getValue(Integer.class)));
-                                }
+                            //Logger for debug
+                            Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
+                            arrayList.add(new Pair<String, Integer>(data.getKey(), data.getValue(Integer.class)));
+                        }
 
-                                chartData.set(0, arrayList);
+                        chartData.set(0, arrayList);
 
-                                //Update UI
-                                updateUI();
-                            }
+                        //Update UI
+                        updateUI();
+                    }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                Toast.makeText(rootView.getContext(), "Database error in realtime update", Toast.LENGTH_SHORT)
-                                        .show();
-                            }
-                        });
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(rootView.getContext(), "Database error in realtime update", Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                });
             }
 
             @Override
@@ -582,7 +599,7 @@ public class DashboardFragment extends Fragment {
         super.onDestroy();
 
 //        mDataChart.child("Question1").removeEventListener(listenerForQuestion1);
-  //      mDataChart.child("Question1").removeEventListener(listenerForQuestion2);
+        //      mDataChart.child("Question1").removeEventListener(listenerForQuestion2);
     }
 
     @Override
