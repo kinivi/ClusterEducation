@@ -107,7 +107,7 @@ public class PollConstructor extends Fragment {
                     question.setDescription("");
                     question.setRandomChoices(false);
                     question.setRequired(true);
-                    question.setQuestionTitle("Title");
+                    question.setQuestionTitle("Title" + i);
                     question.setQuestionType(checkedButton.getText().toString());
                     questionArrayList.add(question);
 
@@ -121,7 +121,15 @@ public class PollConstructor extends Fragment {
                 survey.setQuestions(questionArrayList);
                 survey.setSurveyProperties(surveyProperties);
 
-                FirebaseDatabase.getInstance().getReference().child("polls").push().setValue(survey);
+                String key = FirebaseDatabase.getInstance().getReference().child("polls").push().getKey();
+                FirebaseDatabase.getInstance().getReference().child("polls/" + key).setValue(survey);
+
+                for (int i = 0; i < questionArrayList.size(); i++) {
+                    for (int j = 0; j < questionArrayList.get(i).getChoices().size(); j++) {
+                        FirebaseDatabase.getInstance().getReference().child("polls_answer/" + key + "/" + i + "/" + questionArrayList.get(i).getChoices().get(j)).setValue(0);
+                    }
+                }
+
 
             }
         });

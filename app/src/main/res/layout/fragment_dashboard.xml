@@ -85,7 +85,7 @@
             <com.projects.deus_ex_machina.clustereducation.PollListView
                 android:id="@+id/list_of_polls"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:clipChildren="false"
                 android:clipToPadding="false"
                 android:divider="@null"

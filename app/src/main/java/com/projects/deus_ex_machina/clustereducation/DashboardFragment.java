@@ -42,13 +42,17 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
-import java.io.IOException;
-import java.io.InputStream;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import static android.app.Activity.RESULT_OK;
 import static com.github.mikephil.charting.utils.ColorTemplate.rgb;
@@ -73,24 +77,14 @@ public class DashboardFragment extends Fragment {
     private ChildEventListener listenerForQuestion2;
     private static final int SURVEY_REQUEST = 1337;
     private FirebaseListAdapter<SurveyPojo> adapter;
+    private ListView listView;
+    private DatabaseReference mDatabaseRef;
+    private Integer numberOfSurvey = -1;
+    private String keyOfAnswersForChart = "-L0WEZeXhJP4HUhaQDaa";
 
 
     public DashboardFragment() {
         // Required empty public constructor
-    }
-
-    private String loadSurveyJson(String filename) {
-        try {
-            InputStream is = rootView.getContext().getAssets().open(filename);
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            return new String(buffer, "UTF-8");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return null;
-        }
     }
 
 
@@ -99,84 +93,49 @@ public class DashboardFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mDataChart = FirebaseDatabase.getInstance().getReference()
-                .child("polls/5a193a33");
-
-        //Initialize array of chartData
-        for (int i = 0; i < 2; i++) {
-            chartData.add(null);
-        }
-
-        //Getting reference to data of chart
-        DatabaseReference mDataChartForQuestion1 = mDataChart.child("Question1/CountOfAnswers");
+                .child("polls_answer/" + keyOfAnswersForChart);
 
         //reset chart downloaded data counter
         dataIsDownloadedCounter = 0;
 
-        //Getting query of chart data ordering by value for Question1
-        mDataChartForQuestion1.orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
 
-            //Initialize array of pairs
-            ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
+        //Initialize array of chartData
+        for (int i = 0; i < 2; i++) {
+            chartData.add(null);
 
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            //Getting query of chart data ordering by value for Question1
+            final int finalI = i;
+            mDataChart.child(i + "").orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
 
-                for (DataSnapshot data :
-                        dataSnapshot.getChildren()) {
+                //Initialize array of pairs
+                ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
 
-                    //Logger for debug
-                    Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
-                    arrayList.add(new Pair<String, Integer>(data.getKey(), data.getValue(Integer.class)));
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    for (DataSnapshot data :
+                            dataSnapshot.getChildren()) {
+
+                        //Logger for debug
+                        Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
+                        arrayList.add(new Pair<String, Integer>(data.getKey(), data.getValue(Integer.class)));
+                    }
+
+                    chartData.set(finalI, arrayList);
+
+                    //Increment counter of downloaded data for chart
+                    //There are 2 charts, so if counter is < 2 - wait until date will be downloaded
+                    dataIsDownloadedCounter++;
+
+                    //Update UI
+                    updateUI();
                 }
 
-                chartData.set(0, arrayList);
-
-                //Increment counter of downloaded data for chart
-                //There are 2 charts, so if counter is < 2 - wait until date will be downloaded
-                dataIsDownloadedCounter++;
-
-                //Update UI
-                updateUI();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-
-        //Getting query of chart data ordering by value for Question2
-        DatabaseReference mDataChartForQuestion2 = mDataChart.child("Question2/CountOfAnswers");
-
-        mDataChartForQuestion2.orderByValue().limitToLast(3).addListenerForSingleValueEvent(new ValueEventListener() {
-
-            ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
-
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-
-                for (DataSnapshot data :
-                        dataSnapshot.getChildren()) {
-                    Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
-                    arrayList.add(new Pair<String, Integer>(data.getKey(), data.getValue(Integer.class)));
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
                 }
-
-                chartData.set(1, arrayList);
-
-                //Increment counter of downloaded data for chart
-                //There are 2 charts, so if counter is < 2 - wait until date will be downloaded
-                dataIsDownloadedCounter++;
-
-                //Update UI
-                updateUI();
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+            });
+        }
     }
 
     @Override
@@ -199,10 +158,10 @@ public class DashboardFragment extends Fragment {
         setPieChartAppearance();
         setBarChartAppearance();
 
-        final ListView listView = rootView.findViewById(R.id.list_of_polls);
-        DatabaseReference mRef = FirebaseDatabase.getInstance().getReference().child("polls");
+        listView = rootView.findViewById(R.id.list_of_polls);
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference();
 
-        Query query = mRef.orderByKey();
+        Query query = mDatabaseRef.child("polls").orderByKey();
 
 
         FirebaseListOptions<SurveyPojo> options = new FirebaseListOptions.Builder<SurveyPojo>()
@@ -213,7 +172,8 @@ public class DashboardFragment extends Fragment {
 
         adapter = new FirebaseListAdapter<SurveyPojo>(options) {
             @Override
-            protected void populateView(View v, final SurveyPojo model, int position) {
+            protected void populateView(View v, final SurveyPojo model, final int position) {
+
                 String title = model.getSurveyProperties().getTitle();
                 String subTitle = model.getSurveyProperties().getIntroMessage();
 
@@ -224,9 +184,7 @@ public class DashboardFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
 
-                        Intent intent = new Intent(rootView.getContext(), SurveyActivity.class);
-                        intent.putExtra("TypeOfFragment", "PollFragment");
-                        startActivityForResult(intent, GOOD_RESULT);
+                        numberOfSurvey = position;
 
                         Gson gson = new Gson();
                         String json = gson.toJson(model);
@@ -235,9 +193,6 @@ public class DashboardFragment extends Fragment {
                         i_survey.putExtra("json_survey", json);
 
                         startActivityForResult(i_survey, SURVEY_REQUEST);
-
-
-                        //FirebaseDatabase.getInstance().getReference().push().setValue(new SurveyConstructor().get());
                     }
                 });
 
@@ -247,72 +202,89 @@ public class DashboardFragment extends Fragment {
         adapter.startListening();
         listView.setAdapter(adapter);
 
-
-//        buttonAnswerOnCardView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-////                Intent intent = new Intent(rootView.getContext(), BackButtonActivity.class);
-////                intent.putExtra("TypeOfFragment", "PollFragment");
-////                startActivityForResult(intent, GOOD_RESULT);
-//
-////                SurveyPojo pojo = new SurveyConstructor().get();
-////
-////                Gson gson = new Gson();
-////                String json = gson.toJson(pojo);
-////
-////                Log.d("TAG", json);
-////
-////                Intent i_survey = new Intent(rootView.getContext(), SurveyActivity.class);
-////                i_survey.putExtra("json_survey", json);
-////
-////                startActivityForResult(i_survey, SURVEY_REQUEST);
-//
-//                Log.d("AAA", String.valueOf(listView.getCount()));
-//
-//
-//                //FirebaseDatabase.getInstance().getReference().push().setValue(new SurveyConstructor().get());
-//            }
-//        });
-
         updateUI();
 
         mPieChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
         mBarChart.animateY(1500, Easing.EasingOption.EaseOutQuart);
+
+        setValueListenersToCharts();
 
 
         return rootView;
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        String str;
         if (requestCode == SURVEY_REQUEST) {
             if (resultCode == RESULT_OK) {
 
-                String answers_json = data.getExtras().getString("answers");
+                final String answers_json = data.getExtras().getString("answers");
                 Log.d("****", "****************** WE HAVE ANSWERS ******************");
                 Log.v("ANSWERS JSON", answers_json);
                 Log.d("****", "*****************************************************");
 
+                final String[] keyOfAnswer = new String[1];
+                final Integer[] counter = {0};
 
-//                try {
-//                    JSONObject jsonObject = new JSONObject(answers_json);
-//                    for (Iterator<String> it = jsonObject.keys(); it.hasNext(); ) {
-//                        String key = it.next();
-//
-//
-//                    }
-//                    FirebaseDatabase.getInstance().getReference().child("values")
-//                            .setValue(jsonObject);
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
+                mDatabaseRef.child("polls").orderByKey().addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot data :
+                                dataSnapshot.getChildren()) {
+                            if (counter[0].equals(numberOfSurvey)) {
+                                keyOfAnswer[0] = data.getKey();
+
+                                Log.d("!!!!!!!", keyOfAnswer[0]);
+
+                                try {
+                                    JSONObject jsonObject = new JSONObject(answers_json);
+                                    int iterator = 0;
+                                    for (Iterator<String> it = jsonObject.keys(); it.hasNext(); ) {
+                                        String key = jsonObject.getString(it.next());
+                                        Log.d("!!!!!!!", key);
+
+                                        mDatabaseRef.child("polls_answer/" + keyOfAnswer[0] + "/" + iterator + "/" + key)
+                                                .runTransaction(new Transaction.Handler() {
+                                                    @Override
+                                                    public Transaction.Result doTransaction(MutableData mutableData) {
+                                                        int value;
+
+                                                        try {
+                                                            value = mutableData.getValue(Integer.class);
+                                                            mutableData.setValue(++value);
+                                                        } catch (NullPointerException e) {
+                                                            Log.e("Error in Transaction", e.getMessage());
+                                                        }
 
 
+                                                        return Transaction.success(mutableData);
+                                                    }
+
+                                                    @Override
+                                                    public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+                                                    }
+                                                });
+
+                                        iterator++;
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                return;
+                            }
+                            counter[0]++;
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
             }
         }
-
     }
 
     private void updateUI() {
@@ -347,7 +319,7 @@ public class DashboardFragment extends Fragment {
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
                 //Getting reference to data of chart
-                DatabaseReference mDataChartForQuestion1 = mDataChart.child("Question1/CountOfAnswers");
+                DatabaseReference mDataChartForQuestion1 = mDataChart.child("0");
 
                 //Getting query of chart data ordering by value for Question1
                 mDataChartForQuestion1.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -405,9 +377,9 @@ public class DashboardFragment extends Fragment {
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
                 //Getting query of chart data ordering by value for Question2
-                DatabaseReference mDataChartForQuestion2 = mDataChart.child("Question2/CountOfAnswers");
+                DatabaseReference mDataChartForQuestion2 = mDataChart.child("1");
 
-                mDataChartForQuestion2.orderByValue().limitToLast(3).addListenerForSingleValueEvent(new ValueEventListener() {
+                mDataChartForQuestion2.orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
 
                     ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
 
@@ -452,9 +424,9 @@ public class DashboardFragment extends Fragment {
             }
         };
 
-        mDataChart.child("Question1").addChildEventListener(listenerForQuestion1);
+        mDataChart.child("0").addChildEventListener(listenerForQuestion1);
 
-        mDataChart.child("Question2").addChildEventListener(listenerForQuestion2);
+        mDataChart.child("1").addChildEventListener(listenerForQuestion2);
     }
 
     private void setDataForPieChart(ArrayList<Pair<String, Integer>> arrayList) {
@@ -598,8 +570,8 @@ public class DashboardFragment extends Fragment {
         adapter.stopListening();
         super.onDestroy();
 
-//        mDataChart.child("Question1").removeEventListener(listenerForQuestion1);
-        //      mDataChart.child("Question1").removeEventListener(listenerForQuestion2);
+        mDataChart.child("Question1").removeEventListener(listenerForQuestion1);
+        mDataChart.child("Question1").removeEventListener(listenerForQuestion2);
     }
 
     @Override
