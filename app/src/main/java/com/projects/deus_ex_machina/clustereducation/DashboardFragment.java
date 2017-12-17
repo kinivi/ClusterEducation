@@ -230,42 +230,94 @@ public class DashboardFragment extends Fragment {
                 mDatabaseRef.child("polls").orderByKey().addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        for (DataSnapshot data :
+                        for (final DataSnapshot data :
                                 dataSnapshot.getChildren()) {
                             if (counter[0].equals(numberOfSurvey)) {
                                 keyOfAnswer[0] = data.getKey();
 
-                                Log.d("!!!!!!!", keyOfAnswer[0]);
 
                                 try {
                                     JSONObject jsonObject = new JSONObject(answers_json);
                                     int iterator = 0;
                                     for (Iterator<String> it = jsonObject.keys(); it.hasNext(); ) {
-                                        String key = jsonObject.getString(it.next());
-                                        Log.d("!!!!!!!", key);
+                                        final String key = jsonObject.getString(it.next());
 
-                                        mDatabaseRef.child("polls_answer/" + keyOfAnswer[0] + "/" + iterator + "/" + key)
-                                                .runTransaction(new Transaction.Handler() {
+
+                                        final int finalIterator = iterator;
+                                        mDatabaseRef.child("polls/" + keyOfAnswer[0] +
+                                                "/" + "questions/" + iterator + "/" + "questionType")
+                                                .addListenerForSingleValueEvent(new ValueEventListener() {
                                                     @Override
-                                                    public Transaction.Result doTransaction(MutableData mutableData) {
-                                                        int value;
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        String questionType = dataSnapshot.getValue(String.class);
 
-                                                        try {
-                                                            value = mutableData.getValue(Integer.class);
-                                                            mutableData.setValue(++value);
-                                                        } catch (NullPointerException e) {
-                                                            Log.e("Error in Transaction", e.getMessage());
+                                                        switch (questionType) {
+                                                            case "Radioboxes":
+                                                                mDatabaseRef.child("polls_answer/" + keyOfAnswer[0] + "/" + finalIterator + "/" + key)
+                                                                        .runTransaction(new Transaction.Handler() {
+                                                                            @Override
+                                                                            public Transaction.Result doTransaction(MutableData mutableData) {
+                                                                                int value;
+
+                                                                                try {
+                                                                                    value = mutableData.getValue(Integer.class);
+                                                                                    mutableData.setValue(++value);
+                                                                                } catch (NullPointerException e) {
+                                                                                    Log.e("Error in Transaction", e.getMessage());
+                                                                                }
+
+
+                                                                                return Transaction.success(mutableData);
+                                                                            }
+
+                                                                            @Override
+                                                                            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+                                                                            }
+                                                                        });
+                                                                break;
+                                                            case "String":
+                                                                mDatabaseRef.child("polls_answer/" + keyOfAnswer[0] + "/" + finalIterator)
+                                                                        .push().setValue(key);
+                                                                break;
+                                                            case "Checkboxes":
+
+                                                                mDatabaseRef.child("polls_answer/" + keyOfAnswer[0] + "/" + finalIterator + "/" + key)
+                                                                        .runTransaction(new Transaction.Handler() {
+                                                                            @Override
+                                                                            public Transaction.Result doTransaction(MutableData mutableData) {
+                                                                                int value;
+
+                                                                                try {
+                                                                                    value = mutableData.getValue(Integer.class);
+                                                                                    mutableData.setValue(++value);
+                                                                                } catch (NullPointerException e) {
+                                                                                    Log.e("Error in Transaction", e.getMessage());
+                                                                                }
+
+
+                                                                                return Transaction.success(mutableData);
+                                                                            }
+
+                                                                            @Override
+                                                                            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+                                                                            }
+                                                                        });
+                                                                break;
+
+
+                                                            default:
+                                                                break;
                                                         }
-
-
-                                                        return Transaction.success(mutableData);
                                                     }
 
                                                     @Override
-                                                    public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                                                    public void onCancelled(DatabaseError databaseError) {
 
                                                     }
                                                 });
+
 
                                         iterator++;
                                     }

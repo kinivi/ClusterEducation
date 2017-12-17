@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.androidadvance.androidsurvey.models.Question;
 import com.androidadvance.androidsurvey.models.SurveyPojo;
@@ -59,6 +60,10 @@ public class PollConstructor extends Fragment {
                 LayoutInflater inflater = LayoutInflater.from(rootView.getContext());
                 final View inflatedLayout = inflater.inflate(R.layout.question_card, null, false);
                 linearLayout.addView(inflatedLayout);
+
+                ((TextView) inflatedLayout.findViewById(R.id.question_card_title)).setText("Question card");
+
+
 
                 Button buttonAddAnswer = inflatedLayout.findViewById(R.id.button_add_answer);
                 buttonAddAnswer.setOnClickListener(new View.OnClickListener() {
