@@ -71,6 +71,42 @@
                 app:layout_constraintTop_toBottomOf="@+id/intro_message"
                 app:layout_constraintVertical_bias="0.0" >
 
+                <EditText
+                    android:id="@+id/SurveyTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:textAlignment="center"
+                    android:hint="Survey Title"
+
+                    android:padding="8dp"
+                    />
+
+                <EditText
+                    android:id="@+id/SurveyIntroMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textMultiLine"
+                    android:hint="Survey Intro Message"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/card"
+                    android:padding="8dp"
+                    />
+
+                <EditText
+                    android:id="@+id/SurveyEndMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textMultiLine"
+                    android:hint="Survey End Message"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/card"
+                    android:padding="8dp"
+                    />
             </LinearLayout>
 
             <!--<android.support.constraint.ConstraintLayout-->

@@ -64,7 +64,6 @@ public class PollConstructor extends Fragment {
                 ((TextView) inflatedLayout.findViewById(R.id.question_card_title)).setText("Question card");
 
 
-
                 Button buttonAddAnswer = inflatedLayout.findViewById(R.id.button_add_answer);
                 buttonAddAnswer.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -90,12 +89,39 @@ public class PollConstructor extends Fragment {
                 surveyProperties = new SurveyProperties();
                 questionArrayList = new ArrayList<Question>();
 
-                for (int i = 0; i < linearLayout.getChildCount(); i++) {
+                EditText titleEditText = rootView.findViewById(R.id.SurveyTitle);
+                EditText introMessage = rootView.findViewById(R.id.SurveyIntroMessage);
+                EditText endMessage = rootView.findViewById(R.id.SurveyEndMessage);
+
+
+                if (titleEditText.getText().toString().equals("")) {
+                    surveyProperties.setTitle("");
+                } else {
+                    surveyProperties.setTitle(titleEditText.getText().toString());
+                }
+
+                if (introMessage.getText().toString().equals("")) {
+                    surveyProperties.setIntroMessage("");
+                } else {
+                    surveyProperties.setIntroMessage(introMessage.getText().toString());
+                }
+
+                if (endMessage.getText().toString().equals("")) {
+                    surveyProperties.setEndMessage("");
+                } else {
+                    surveyProperties.setEndMessage(endMessage.getText().toString());
+                }
+
+
+
+                for (int i = 3; i < linearLayout.getChildCount(); i++) {
                     ArrayList<String> choises = new ArrayList<String>();
                     Question question = new Question();
-                    String questionType;
+                    String description = "";
+
 
                     View counterView = linearLayout.getChildAt(i);
+                    EditText editTextTitle = rootView.findViewById(R.id.title_edit_text);
 
                     LinearLayout container = counterView.findViewById(R.id.container_for_answers);
 
@@ -109,18 +135,26 @@ public class PollConstructor extends Fragment {
 
 
                     question.setChoices(choises);
-                    question.setDescription("");
                     question.setRandomChoices(false);
                     question.setRequired(true);
-                    question.setQuestionTitle("Title" + i);
+
+                    if (editTextTitle.getText().toString().equals("")) {
+                        question.setQuestionTitle("Question #" + i);
+                    } else {
+                        question.setQuestionTitle(editTextTitle.getText().toString());
+                    }
+
+                    if (editTextTitle.getText().toString().equals("")) {
+                        question.setDescription("");
+                    } else {
+                        question.setDescription(((EditText) rootView.findViewById(R.id.description_edit_text)).getText().toString());
+                    }
+
                     question.setQuestionType(checkedButton.getText().toString());
                     questionArrayList.add(question);
 
                 }
 
-                surveyProperties.setTitle("Title");
-                surveyProperties.setEndMessage("End message");
-                surveyProperties.setIntroMessage("Intro");
                 surveyProperties.setSkipIntro(false);
 
                 survey.setQuestions(questionArrayList);
@@ -138,7 +172,6 @@ public class PollConstructor extends Fragment {
 
             }
         });
-
 
 
         return rootView;

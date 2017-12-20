@@ -141,9 +141,6 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(this, ChooserActivity.class));
                 MainActivity.this.finish();
                 return true;
-
-            case R.id.action_settings:
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -172,7 +169,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }, 200);
 
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_constructor) {
             prevID = id;
             new Handler().postDelayed(new Runnable() {
 
@@ -181,10 +178,6 @@ public class MainActivity extends AppCompatActivity
                             .replace(R.id.dynamic_content_container, new PollConstructor()).commit();
                 }
             }, 200);
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {
 
