@@ -127,6 +127,10 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
     //Implement functionality of menu
     @Override
@@ -140,9 +144,6 @@ public class MainActivity extends AppCompatActivity
                 mUsername = ANONYMOUS;
                 startActivity(new Intent(this, ChooserActivity.class));
                 MainActivity.this.finish();
-                return true;
-
-            case R.id.action_settings:
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -170,13 +171,17 @@ public class MainActivity extends AppCompatActivity
                 public void run() {
                     setMainFragment();
                 }
-            }, 300);
+            }, 200);
 
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_constructor) {
+            prevID = id;
+            new Handler().postDelayed(new Runnable() {
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
+                public void run() {
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.dynamic_content_container, new PollConstructor()).commit();
+                }
+            }, 200);
 
         } else if (id == R.id.nav_share) {
 
@@ -185,12 +190,11 @@ public class MainActivity extends AppCompatActivity
             new Handler().postDelayed(new Runnable() {
 
                 public void run() {
-                    Intent intent = new Intent(MainActivity.this, BackButtonActivity.class);
+                    Intent intent = new Intent(MainActivity.this, BlankContainerActivity.class);
                     intent.putExtra("TypeOfFragment", "FeedbackFragment");
                     startActivity(intent);
                 }
-            }, 300);
-            prevID = id;
+            }, 200);
 
 
         }
@@ -201,6 +205,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setMainFragment() {
+
         getSupportFragmentManager().popBackStack();
         getSupportFragmentManager().beginTransaction()
                 .setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE)

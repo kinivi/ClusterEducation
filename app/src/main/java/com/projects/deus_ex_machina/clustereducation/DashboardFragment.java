@@ -13,10 +13,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androidadvance.androidsurvey.SurveyActivity;
+import com.androidadvance.androidsurvey.models.SurveyPojo;
+import com.firebase.ui.database.FirebaseListAdapter;
+import com.firebase.ui.database.FirebaseListOptions;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.HorizontalBarChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -36,10 +42,19 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
+import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
+import static android.app.Activity.RESULT_OK;
 import static com.github.mikephil.charting.utils.ColorTemplate.rgb;
 
 
@@ -60,6 +75,12 @@ public class DashboardFragment extends Fragment {
     private DatabaseReference mDataChart;
     private ChildEventListener listenerForQuestion1;
     private ChildEventListener listenerForQuestion2;
+    private static final int SURVEY_REQUEST = 1337;
+    private FirebaseListAdapter<SurveyPojo> adapter;
+    private ListView listView;
+    private DatabaseReference mDatabaseRef;
+    private Integer numberOfSurvey = -1;
+    private String keyOfAnswersForChart = "-L0WEZeXhJP4HUhaQDaa";
 
 
     public DashboardFragment() {
@@ -72,84 +93,49 @@ public class DashboardFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         mDataChart = FirebaseDatabase.getInstance().getReference()
-                .child("polls/5a193a33");
-
-        //Initialize array of chartData
-        for (int i = 0; i < 2; i++) {
-            chartData.add(null);
-        }
-
-        //Getting reference to data of chart
-        DatabaseReference mDataChartForQuestion1 = mDataChart.child("Question1/CountOfAnswers");
+                .child("polls_answer/" + keyOfAnswersForChart);
 
         //reset chart downloaded data counter
         dataIsDownloadedCounter = 0;
 
-        //Getting query of chart data ordering by value for Question1
-        mDataChartForQuestion1.orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
 
-            //Initialize array of pairs
-            ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
+        //Initialize array of chartData
+        for (int i = 0; i < 2; i++) {
+            chartData.add(null);
 
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            //Getting query of chart data ordering by value for Question1
+            final int finalI = i;
+            mDataChart.child(i + "").orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
 
-                for (DataSnapshot data :
-                        dataSnapshot.getChildren()) {
+                //Initialize array of pairs
+                ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
 
-                    //Logger for debug
-                    Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
-                    arrayList.add(new Pair<String, Integer>(data.getKey(), data.getValue(Integer.class)));
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    for (DataSnapshot data :
+                            dataSnapshot.getChildren()) {
+
+                        //Logger for debug
+                        Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
+                        arrayList.add(new Pair<String, Integer>(data.getKey(), data.getValue(Integer.class)));
+                    }
+
+                    chartData.set(finalI, arrayList);
+
+                    //Increment counter of downloaded data for chart
+                    //There are 2 charts, so if counter is < 2 - wait until date will be downloaded
+                    dataIsDownloadedCounter++;
+
+                    //Update UI
+                    updateUI();
                 }
 
-                chartData.set(0, arrayList);
-
-                //Increment counter of downloaded data for chart
-                //There are 2 charts, so if counter is < 2 - wait until date will be downloaded
-                dataIsDownloadedCounter++;
-
-                //Update UI
-                updateUI();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-
-        //Getting query of chart data ordering by value for Question2
-        DatabaseReference mDataChartForQuestion2 = mDataChart.child("Question2/CountOfAnswers");
-
-        mDataChartForQuestion2.orderByValue().limitToLast(3).addListenerForSingleValueEvent(new ValueEventListener() {
-
-            ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
-
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-
-                for (DataSnapshot data :
-                        dataSnapshot.getChildren()) {
-                    Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
-                    arrayList.add(new Pair<String, Integer>(data.getKey(), data.getValue(Integer.class)));
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
                 }
-
-                chartData.set(1, arrayList);
-
-                //Increment counter of downloaded data for chart
-                //There are 2 charts, so if counter is < 2 - wait until date will be downloaded
-                dataIsDownloadedCounter++;
-
-                //Update UI
-                updateUI();
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
+            });
+        }
     }
 
     @Override
@@ -159,9 +145,6 @@ public class DashboardFragment extends Fragment {
         //Getting the rootView to access standard methods of Activity in Fragment
         rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
-
-        //Getting ID of answer button on Card View
-        Button buttonAnswerOnCardView = rootView.findViewById(R.id.buttonAnswer);
 
         progressBar = rootView.findViewById(R.id.progressBar);
 
@@ -175,14 +158,49 @@ public class DashboardFragment extends Fragment {
         setPieChartAppearance();
         setBarChartAppearance();
 
-        buttonAnswerOnCardView.setOnClickListener(new View.OnClickListener() {
+        listView = rootView.findViewById(R.id.list_of_polls);
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference();
+
+        Query query = mDatabaseRef.child("polls").orderByKey();
+
+
+        FirebaseListOptions<SurveyPojo> options = new FirebaseListOptions.Builder<SurveyPojo>()
+                .setLayout(R.layout.card_view_for_poll)
+                .setQuery(query, SurveyPojo.class)
+                .build();
+
+
+        adapter = new FirebaseListAdapter<SurveyPojo>(options) {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(rootView.getContext(), BackButtonActivity.class);
-                intent.putExtra("TypeOfFragment", "PollFragment");
-                startActivityForResult(intent, GOOD_RESULT);
+            protected void populateView(View v, final SurveyPojo model, final int position) {
+
+                String title = model.getSurveyProperties().getTitle();
+                String subTitle = model.getSurveyProperties().getIntroMessage();
+
+                ((TextView) v.findViewById(R.id.cardTitle)).setText(title);
+                ((TextView) v.findViewById(R.id.cardSubtitle)).setText(subTitle);
+
+                ((Button) v.findViewById(R.id.buttonAnswer)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        numberOfSurvey = position;
+
+                        Gson gson = new Gson();
+                        String json = gson.toJson(model);
+
+                        Intent i_survey = new Intent(rootView.getContext(), SurveyActivity.class);
+                        i_survey.putExtra("json_survey", json);
+
+                        startActivityForResult(i_survey, SURVEY_REQUEST);
+                    }
+                });
+
             }
-        });
+        };
+
+        adapter.startListening();
+        listView.setAdapter(adapter);
 
         updateUI();
 
@@ -193,6 +211,132 @@ public class DashboardFragment extends Fragment {
 
 
         return rootView;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SURVEY_REQUEST) {
+            if (resultCode == RESULT_OK) {
+
+                final String answers_json = data.getExtras().getString("answers");
+                Log.d("****", "****************** WE HAVE ANSWERS ******************");
+                Log.v("ANSWERS JSON", answers_json);
+                Log.d("****", "*****************************************************");
+
+                final String[] keyOfAnswer = new String[1];
+                final Integer[] counter = {0};
+
+                mDatabaseRef.child("polls").orderByKey().addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (final DataSnapshot data :
+                                dataSnapshot.getChildren()) {
+                            if (counter[0].equals(numberOfSurvey)) {
+                                keyOfAnswer[0] = data.getKey();
+
+
+                                try {
+                                    JSONObject jsonObject = new JSONObject(answers_json);
+                                    int iterator = 0;
+                                    for (Iterator<String> it = jsonObject.keys(); it.hasNext(); ) {
+                                        final String key = jsonObject.getString(it.next());
+
+
+                                        final int finalIterator = iterator;
+                                        mDatabaseRef.child("polls/" + keyOfAnswer[0] +
+                                                "/" + "questions/" + iterator + "/" + "questionType")
+                                                .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        String questionType = dataSnapshot.getValue(String.class);
+
+                                                        switch (questionType) {
+                                                            case "Radioboxes":
+                                                                mDatabaseRef.child("polls_answer/" + keyOfAnswer[0] + "/" + finalIterator + "/" + key)
+                                                                        .runTransaction(new Transaction.Handler() {
+                                                                            @Override
+                                                                            public Transaction.Result doTransaction(MutableData mutableData) {
+                                                                                int value;
+
+                                                                                try {
+                                                                                    value = mutableData.getValue(Integer.class);
+                                                                                    mutableData.setValue(++value);
+                                                                                } catch (NullPointerException e) {
+                                                                                    Log.e("Error in Transaction", e.getMessage());
+                                                                                }
+
+
+                                                                                return Transaction.success(mutableData);
+                                                                            }
+
+                                                                            @Override
+                                                                            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+                                                                            }
+                                                                        });
+                                                                break;
+                                                            case "String":
+                                                                mDatabaseRef.child("polls_answer/" + keyOfAnswer[0] + "/" + finalIterator)
+                                                                        .push().setValue(key);
+                                                                break;
+                                                            case "Checkboxes":
+
+                                                                mDatabaseRef.child("polls_answer/" + keyOfAnswer[0] + "/" + finalIterator + "/" + key)
+                                                                        .runTransaction(new Transaction.Handler() {
+                                                                            @Override
+                                                                            public Transaction.Result doTransaction(MutableData mutableData) {
+                                                                                int value;
+
+                                                                                try {
+                                                                                    value = mutableData.getValue(Integer.class);
+                                                                                    mutableData.setValue(++value);
+                                                                                } catch (NullPointerException e) {
+                                                                                    Log.e("Error in Transaction", e.getMessage());
+                                                                                }
+
+
+                                                                                return Transaction.success(mutableData);
+                                                                            }
+
+                                                                            @Override
+                                                                            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+                                                                            }
+                                                                        });
+                                                                break;
+
+
+                                                            default:
+                                                                break;
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
+
+                                                    }
+                                                });
+
+
+                                        iterator++;
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                return;
+                            }
+                            counter[0]++;
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        }
     }
 
     private void updateUI() {
@@ -216,7 +360,7 @@ public class DashboardFragment extends Fragment {
 
     }
 
-    private void setValueListenersToCharts(){
+    private void setValueListenersToCharts() {
         listenerForQuestion1 = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -227,37 +371,37 @@ public class DashboardFragment extends Fragment {
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
                 //Getting reference to data of chart
-                DatabaseReference mDataChartForQuestion1 = mDataChart.child("Question1/CountOfAnswers");
+                DatabaseReference mDataChartForQuestion1 = mDataChart.child("0");
 
                 //Getting query of chart data ordering by value for Question1
                 mDataChartForQuestion1.addListenerForSingleValueEvent(new ValueEventListener() {
 
-                            //Initialize array of pairs
-                            ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
+                    //Initialize array of pairs
+                    ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
 
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                for (DataSnapshot data :
-                                        dataSnapshot.getChildren()) {
+                        for (DataSnapshot data :
+                                dataSnapshot.getChildren()) {
 
-                                    //Logger for debug
-                                    Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
-                                    arrayList.add(new Pair<String, Integer>(data.getKey(), data.getValue(Integer.class)));
-                                }
+                            //Logger for debug
+                            Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
+                            arrayList.add(new Pair<String, Integer>(data.getKey(), data.getValue(Integer.class)));
+                        }
 
-                                chartData.set(0, arrayList);
+                        chartData.set(0, arrayList);
 
-                                //Update UI
-                                updateUI();
-                            }
+                        //Update UI
+                        updateUI();
+                    }
 
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                Toast.makeText(rootView.getContext(), "Database error in realtime update", Toast.LENGTH_SHORT)
-                                        .show();
-                            }
-                        });
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(rootView.getContext(), "Database error in realtime update", Toast.LENGTH_SHORT)
+                                .show();
+                    }
+                });
             }
 
             @Override
@@ -285,9 +429,9 @@ public class DashboardFragment extends Fragment {
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
                 //Getting query of chart data ordering by value for Question2
-                DatabaseReference mDataChartForQuestion2 = mDataChart.child("Question2/CountOfAnswers");
+                DatabaseReference mDataChartForQuestion2 = mDataChart.child("1");
 
-                mDataChartForQuestion2.orderByValue().limitToLast(3).addListenerForSingleValueEvent(new ValueEventListener() {
+                mDataChartForQuestion2.orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
 
                     ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
 
@@ -332,9 +476,9 @@ public class DashboardFragment extends Fragment {
             }
         };
 
-        mDataChart.child("Question1").addChildEventListener(listenerForQuestion1);
+        mDataChart.child("0").addChildEventListener(listenerForQuestion1);
 
-        mDataChart.child("Question2").addChildEventListener(listenerForQuestion2);
+        mDataChart.child("1").addChildEventListener(listenerForQuestion2);
     }
 
     private void setDataForPieChart(ArrayList<Pair<String, Integer>> arrayList) {
@@ -475,8 +619,22 @@ public class DashboardFragment extends Fragment {
 
     @Override
     public void onDestroy() {
+        adapter.stopListening();
         super.onDestroy();
+
         mDataChart.child("Question1").removeEventListener(listenerForQuestion1);
         mDataChart.child("Question1").removeEventListener(listenerForQuestion2);
+    }
+
+    @Override
+    public void onStart() {
+        adapter.startListening();
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        adapter.stopListening();
+        super.onStop();
     }
 }

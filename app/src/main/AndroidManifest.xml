@@ -33,7 +33,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".BackButtonActivity"
+            android:name=".BlankContainerActivity"
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait"
@@ -54,6 +54,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.androidadvance.androidsurvey.SurveyActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
+            android:windowSoftInputMode="stateHidden"/>
     </application>
 
 </manifest>

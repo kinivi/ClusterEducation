@@ -64,7 +64,7 @@ public class PollFragment extends Fragment {
         editText2 = rootView.findViewById(R.id.comment_2);
 
         //Getting references of RadioGroup views
-        group1 = rootView.findViewById(R.id.radioGroup1);
+        group1 = rootView.findViewById(R.id.type_of_answers);
         group2 = rootView.findViewById(R.id.radioGroup2);
 
         //Getting references of Button to process onClickListener
@@ -98,7 +98,7 @@ public class PollFragment extends Fragment {
 
             //For each question run transaction
             for (int i = 0; i <= 1; i++) {
-                mDatabase.child("Question" + (i + 1) + "/CountOfAnswers/" + valuesData.get(i))
+                mDatabase.child("Survey" + (i + 1) + "/CountOfAnswers/" + valuesData.get(i))
                         .runTransaction(new Transaction.Handler() {
                             @Override
                             public Transaction.Result doTransaction(MutableData mutableData) {
