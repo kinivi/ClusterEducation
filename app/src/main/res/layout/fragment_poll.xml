@@ -17,7 +17,7 @@
             android:clipToPadding="false"
             android:orientation="vertical"
             android:padding="8dp"
-            tools:context="com.projects.deus_ex_machina.clustereducation.BackButtonActivity">
+            tools:context="com.projects.deus_ex_machina.clustereducation.BlankContainerActivity">
 
             <android.support.v7.widget.CardView
                 android:id="@+id/cardView"

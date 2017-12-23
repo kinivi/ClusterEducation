@@ -127,6 +127,10 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 
     //Implement functionality of menu
     @Override
@@ -186,12 +190,11 @@ public class MainActivity extends AppCompatActivity
             new Handler().postDelayed(new Runnable() {
 
                 public void run() {
-                    Intent intent = new Intent(MainActivity.this, BackButtonActivity.class);
+                    Intent intent = new Intent(MainActivity.this, BlankContainerActivity.class);
                     intent.putExtra("TypeOfFragment", "FeedbackFragment");
                     startActivity(intent);
                 }
             }, 200);
-            prevID = id;
 
 
         }
@@ -202,6 +205,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setMainFragment() {
+
         getSupportFragmentManager().popBackStack();
         getSupportFragmentManager().beginTransaction()
                 .setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE)

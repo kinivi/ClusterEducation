@@ -32,8 +32,9 @@ public class MainFragment extends Fragment {
         TabLayout tabLayout = rootView.findViewById(R.id.tabLayout);
 
         //Setting Fragment page adapter to View pager
-        FragmentPageAdapter adapter = new FragmentPageAdapter(getActivity().getSupportFragmentManager());
+        FragmentPageAdapter adapter = new FragmentPageAdapter(getChildFragmentManager());
         viewPager.setAdapter(adapter);
+        adapter.startUpdate(viewPager);
 
         //setting icons for TabLayout
         tabLayout.setupWithViewPager(viewPager);

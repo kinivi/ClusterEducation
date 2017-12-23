@@ -33,7 +33,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".BackButtonActivity"
+            android:name=".BlankContainerActivity"
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="stateHidden"
             android:screenOrientation="portrait"
