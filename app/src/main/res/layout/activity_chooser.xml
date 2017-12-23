@@ -5,39 +5,64 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     android:orientation="vertical"
-    tools:context="com.projects.deus_ex_machina.clustereducation.ChooserActivity">
+    tools:context="com.projects.deus_ex_machina.clustereducation.ChooserActivity"
+    android:background="@drawable/login_background">
 
-
-    <TextView
+    <LinearLayout
         android:id="@+id/entrant"
-        style="@style/CategoryStyle"
-        android:layout_width="0dp"
-        android:layout_height="116dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="72dp"
-        android:text="Entrant"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            style="@style/CategoryStyle"
+            android:layout_marginTop="40dp">
 
-        />
+            <ImageView
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/login_entrant"/>
 
-    <TextView
-        android:id="@+id/student_mentor"
-        android:layout_width="0dp"
-        android:layout_height="232dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="72dp"
-        android:text="Student or Mentor"
-        style="@style/CategoryStyle"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="116dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textSize="54sp"
+                android:text="Entrant"/>
 
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/entrant" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/student_mentor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            style="@style/CategoryStyle"
+            android:layout_marginTop="20dp">
+            <ImageView
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/login_student"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="170dp"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
+                android:textSize="54sp"
+                android:text="Student"/>
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
 
 </android.support.constraint.ConstraintLayout>
