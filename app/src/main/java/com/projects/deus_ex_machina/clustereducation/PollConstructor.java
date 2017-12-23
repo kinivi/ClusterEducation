@@ -10,8 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.androidadvance.androidsurvey.models.Question;
@@ -130,8 +129,7 @@ public class PollConstructor extends Fragment {
                         choises.add(editText.getText().toString());
                     }
 
-                    RadioGroup radioGroup = counterView.findViewById(R.id.type_of_answers);
-                    RadioButton checkedButton = counterView.findViewById(radioGroup.getCheckedRadioButtonId());
+                    Spinner spinner = counterView.findViewById(R.id.spinner__for_types_of_question);
 
 
                     question.setChoices(choises);
@@ -150,7 +148,7 @@ public class PollConstructor extends Fragment {
                         question.setDescription(((EditText) rootView.findViewById(R.id.description_edit_text)).getText().toString());
                     }
 
-                    question.setQuestionType(checkedButton.getText().toString());
+                    question.setQuestionType(spinner.getSelectedItem().toString());
                     questionArrayList.add(question);
 
                 }

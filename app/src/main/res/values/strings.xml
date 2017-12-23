@@ -23,4 +23,12 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <!--Array of string to question card spinner-->
+    <string-array name="type_of_question">
+        <item>Radioboxes</item>
+        <item>Checkboxes</item>
+        <item>String</item>
+        <item>StringMultiline</item>
+    </string-array>
 </resources>
