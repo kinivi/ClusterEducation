@@ -63,7 +63,7 @@ public class PollConstructor extends Fragment {
             public void onClick(View view) {
 
                 final LayoutInflater inflater = LayoutInflater.from(rootView.getContext());
-                final View inflatedLayout = inflater.inflate(R.layout.card_question, null, false);
+                final View inflatedLayout = inflater.inflate(R.layout.question_card, null, false);
                 linearLayout.addView(inflatedLayout);
 
                 ((TextView) inflatedLayout.findViewById(R.id.question_card_title)).setText("Question card");
