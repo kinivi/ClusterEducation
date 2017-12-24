@@ -127,11 +127,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
     //Implement functionality of menu
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -179,7 +174,7 @@ public class MainActivity extends AppCompatActivity
 
                 public void run() {
                     getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.dynamic_content_container, new PollConstructor()).commit();
+                            .replace(R.id.dynamic_content_container, new ListOfCreatedPolls()).commit();
                 }
             }, 200);
 

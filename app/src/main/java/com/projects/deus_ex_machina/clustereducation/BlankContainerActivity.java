@@ -25,6 +25,10 @@ public class BlankContainerActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .replace(R.id.dynamic_backbutton_container, new FeedbackFragment()).commit();
+        } else if(mIntent.getStringExtra("TypeOfFragment").equals("ConstructorFragment")) {
+            getSupportFragmentManager().beginTransaction()
+                    .setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .replace(R.id.dynamic_backbutton_container, new PollConstructor()).commit();
         }
 
 
