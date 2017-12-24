@@ -136,12 +136,12 @@
                 android:layout_marginEnd="8dp"
                 android:text="Add answer"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/button3"
+                app:layout_constraintEnd_toStartOf="@+id/button_delete_answer"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/container_for_answers" />
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/button_delete_answer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="delete question"

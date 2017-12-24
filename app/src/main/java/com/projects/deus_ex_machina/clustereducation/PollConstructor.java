@@ -63,14 +63,16 @@ public class PollConstructor extends Fragment {
             public void onClick(View view) {
 
                 LayoutInflater inflater = LayoutInflater.from(rootView.getContext());
-                final View inflatedLayout = inflater.inflate(R.layout.question_card, null, false);
+                final View inflatedLayout = inflater.inflate(R.layout.card_question, null, false);
                 linearLayout.addView(inflatedLayout);
 
                 ((TextView) inflatedLayout.findViewById(R.id.question_card_title)).setText("Question card");
 
 
                 Button buttonAddAnswer = inflatedLayout.findViewById(R.id.button_add_answer);
-                Button buttonDeleteQuestion;
+                Button buttonDeleteQuestion = inflatedLayout.findViewById(R.id.button_delete_answer);
+
+
                 buttonAddAnswer.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -81,6 +83,13 @@ public class PollConstructor extends Fragment {
 
                         container.addView(answerEditText);
 
+                    }
+                });
+
+                buttonDeleteQuestion.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        linearLayout.removeView(inflatedLayout);
                     }
                 });
             }
