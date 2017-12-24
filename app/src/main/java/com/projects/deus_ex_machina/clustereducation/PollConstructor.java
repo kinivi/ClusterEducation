@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidadvance.androidsurvey.models.Question;
 import com.androidadvance.androidsurvey.models.SurveyPojo;
@@ -69,6 +70,7 @@ public class PollConstructor extends Fragment {
 
 
                 Button buttonAddAnswer = inflatedLayout.findViewById(R.id.button_add_answer);
+                Button buttonDeleteQuestion;
                 buttonAddAnswer.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -116,6 +118,10 @@ public class PollConstructor extends Fragment {
 
                     introMessage.setError("Intro message is required!");
 
+                } else if(endMessage.getText().toString().trim().equals("")) {
+                    endMessage.setError("End message is required!");
+                } else if(linearLayout.getChildCount() < 4){
+                    Toast.makeText(getContext(), "Add minimum 1 question", Toast.LENGTH_SHORT).show();
                 } else {
 
                     if (titleEditText.getText().toString().equals("")) {
@@ -143,19 +149,28 @@ public class PollConstructor extends Fragment {
                         String description = "";
 
 
+
                         View counterView = linearLayout.getChildAt(i);
                         EditText editTextTitle = rootView.findViewById(R.id.title_edit_text);
 
                         LinearLayout container = counterView.findViewById(R.id.container_for_answers);
 
+                        if(container.getChildCount() < 1) {
+                            Toast.makeText(getContext(), "Add minimum 1 answer", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         for (int j = 0; j < container.getChildCount(); j++) {
                             EditText editText = (EditText) container.getChildAt(j);
                             choises.add(editText.getText().toString());
                         }
 
                         RadioGroup radioGroup = counterView.findViewById(R.id.type_of_answers);
-                        RadioButton checkedButton = counterView.findViewById(radioGroup.getCheckedRadioButtonId());
 
+                        if(radioGroup.getCheckedRadioButtonId() == -1){
+                            Toast.makeText(getContext(), "Choose type of answer", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        RadioButton checkedButton = counterView.findViewById(radioGroup.getCheckedRadioButtonId());
 
                         question.setChoices(choises);
                         question.setRandomChoices(false);
@@ -195,6 +210,8 @@ public class PollConstructor extends Fragment {
                     SurveyInfo info = new SurveyInfo(surveyProperties.getTitle(), surveyProperties.getIntroMessage(),
                             survey.getQuestions().size(), dateFormat.format(date), 0);
                     FirebaseDatabase.getInstance().getReference().child("polls_info/" + key).setValue(info);
+
+                    Toast.makeText(getContext(), "Survey is created", Toast.LENGTH_SHORT).show();
 
                     getActivity().finish();
                 }
