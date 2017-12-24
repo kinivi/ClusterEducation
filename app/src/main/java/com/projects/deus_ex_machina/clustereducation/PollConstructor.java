@@ -62,7 +62,7 @@ public class PollConstructor extends Fragment {
             @Override
             public void onClick(View view) {
 
-                LayoutInflater inflater = LayoutInflater.from(rootView.getContext());
+                final LayoutInflater inflater = LayoutInflater.from(rootView.getContext());
                 final View inflatedLayout = inflater.inflate(R.layout.card_question, null, false);
                 linearLayout.addView(inflatedLayout);
 
@@ -76,12 +76,20 @@ public class PollConstructor extends Fragment {
                 buttonAddAnswer.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        LinearLayout container = inflatedLayout.findViewById(R.id.container_for_answers);
+                        final LinearLayout container = inflatedLayout.findViewById(R.id.container_for_answers);
 
-                        EditText answerEditText = new EditText(rootView.getContext());
-                        answerEditText.setHint("New answer");
+                        final View answerLayout = inflater.inflate(R.layout.answer_layout, null, false);
+                        Button deleteAnswer = answerLayout.findViewById(R.id.delete_answer);
+                        deleteAnswer.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                container.removeView(answerLayout);
+                            }
+                        });
+                        //EditText answerEditText = new EditText(rootView.getContext());
+                        //answerEditText.setHint("New answer");
 
-                        container.addView(answerEditText);
+                        container.addView(answerLayout);
 
                     }
                 });
@@ -169,7 +177,13 @@ public class PollConstructor extends Fragment {
                             return;
                         }
                         for (int j = 0; j < container.getChildCount(); j++) {
-                            EditText editText = (EditText) container.getChildAt(j);
+                            EditText editText = (EditText) container.getChildAt(j).findViewById(R.id.edit_text_answer);
+
+                            if(editText.getText().toString().equals("")){
+                                editText.setError("Answer is blank");
+                                return;
+                            }
+
                             choises.add(editText.getText().toString());
                         }
 
