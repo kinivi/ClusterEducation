@@ -1,11 +1,14 @@
 package com.projects.deus_ex_machina.clustereducation;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -31,7 +34,7 @@ public class SubjectCardAdapter extends ArrayAdapter<SubjectCard>{
                     R.layout.card_subject, parent, false);
         }
         //Get the position of the item to be displayed
-        SubjectCard currentSubjectCard = getItem(position);
+        final SubjectCard currentSubjectCard = getItem(position);
         //Set text
         TextView subjectName = gridItemView.findViewById(R.id.subject_name_text_view);
         subjectName.setText(currentSubjectCard.getSubjectName());
@@ -43,4 +46,5 @@ public class SubjectCardAdapter extends ArrayAdapter<SubjectCard>{
         return gridItemView;
     }
 }
+
 
