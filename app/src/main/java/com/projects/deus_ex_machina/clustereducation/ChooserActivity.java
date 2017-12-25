@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,8 +43,8 @@ public class ChooserActivity extends AppCompatActivity implements
         //Creating instance of Firebase object
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-        TextView entrant = (TextView) findViewById(R.id.entrant);
-        TextView StudentOrMentor = (TextView) findViewById(R.id.student_mentor);
+        LinearLayout entrant = (LinearLayout) findViewById(R.id.entrant);
+        LinearLayout StudentOrMentor = (LinearLayout) findViewById(R.id.student_mentor);
 
         //Set click listener for entrant TdxtView
         entrant.setOnClickListener(new View.OnClickListener() {

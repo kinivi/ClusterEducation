@@ -227,6 +227,7 @@ public class DashboardFragment extends Fragment {
                 final String[] keyOfAnswer = new String[1];
                 final Integer[] counter = {0};
 
+
                 mDatabaseRef.child("polls").orderByKey().addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -244,6 +245,21 @@ public class DashboardFragment extends Fragment {
 
 
                                         final int finalIterator = iterator;
+                                        FirebaseDatabase.getInstance().getReference().child("polls_info/" + keyOfAnswer[0] +
+                                                "/" + "participants").runTransaction(new Transaction.Handler() {
+                                            @Override
+                                            public Transaction.Result doTransaction(MutableData mutableData) {
+                                                int countOfParticipants = mutableData.getValue(Integer.class);
+                                                mutableData.setValue(++countOfParticipants);
+                                                return Transaction.success(mutableData);
+                                            }
+
+                                            @Override
+                                            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+                                            }
+                                        });
+
                                         mDatabaseRef.child("polls/" + keyOfAnswer[0] +
                                                 "/" + "questions/" + iterator + "/" + "questionType")
                                                 .addListenerForSingleValueEvent(new ValueEventListener() {

@@ -54,12 +54,9 @@ public class SubjectsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 LayoutInflater inflater1 = getActivity().getLayoutInflater();
-                View view1 = inflater1.inflate(R.layout.fragment_open_subject, null);
                 SubjectCard[] objects = new SubjectCard[8];
                 objects = subjects.toArray(objects);
                 String sub_name = objects[i].getSubjectName();
-                //TextView textView = view1.findViewById(R.id.subject_namy);
-                //textView.setText(sub_name);
                 Intent subjectClick = new Intent(getContext(), BlankContainerActivity.class);
                 subjectClick.putExtra("TypeOfFragment", "OpenSubjectFragment");
                 subjectClick.putExtra("Name", sub_name);

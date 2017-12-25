@@ -14,6 +14,7 @@
 
         android:layout_margin="8dp"
         android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,12 +27,32 @@
             android:orientation="horizontal"
             android:padding="8dp">
 
-            <TextView
-                android:id="@+id/question_card_title"
+            <Spinner
+                android:id="@+id/spinner__for_types_of_question"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:entries="@array/type_of_question"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/description_edit_text" />
+
+            <TextView
+                android:id="@+id/question_card_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:text="Question 1" />
 
             <EditText
@@ -39,12 +60,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:ems="10"
-                android:inputType="text"
-                android:hint="Title"
                 android:background="@drawable/card"
-                android:textAlignment="center"
+                android:ems="10"
+                android:hint="Title"
+                android:inputType="text"
                 android:padding="8dp"
+                android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/question_card_title" />
@@ -53,29 +74,29 @@
                 android:id="@+id/description_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="80dp"
-                android:textAlignment="viewStart"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/card"
                 android:ems="10"
+                android:gravity="start"
                 android:hint="Description"
                 android:inputType="textMultiLine"
+                android:minHeight="80dp"
                 android:padding="8dp"
+                android:textAlignment="viewStart"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/title_edit_text"
-                android:gravity="start" />
+                app:layout_constraintTop_toBottomOf="@+id/title_edit_text" />
 
             <RadioGroup
                 android:id="@+id/type_of_answers"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
 
-                android:layout_marginTop="8dp"
                 android:orientation="horizontal"
                 android:textAlignment="center"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/description_edit_text">
+                android:visibility="gone"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="178dp">
 
                 <RadioButton
                     android:layout_width="match_parent"
@@ -109,31 +130,38 @@
                 android:id="@+id/container_for_answers"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:orientation="vertical"
-                app:layout_constraintBottom_toTopOf="@+id/button_add_answer"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/type_of_answers">
+                app:layout_constraintTop_toBottomOf="@+id/spinner__for_types_of_question">
 
             </LinearLayout>
 
 
             <Button
                 android:id="@+id/button_add_answer"
-                android:layout_width="wrap_content"
-                android:layout_height="46dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:text="Add answer"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/button_delete_answer"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/container_for_answers" />
+
+            <Button
+                android:id="@+id/button_delete_answer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="delete question"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
 
         </android.support.constraint.ConstraintLayout>

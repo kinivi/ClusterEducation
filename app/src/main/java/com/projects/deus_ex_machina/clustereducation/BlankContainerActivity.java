@@ -31,12 +31,17 @@ public class BlankContainerActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .replace(R.id.dynamic_backbutton_container, new FeedbackFragment()).commit();
+
         } else if(mIntent.getStringExtra("TypeOfFragment").equals("OpenSubjectFragment")) {
             OpenSubjectFragment openSubjectFragment = new OpenSubjectFragment();
             openSubjectFragment.setName_of_a_subject(mIntent.getStringExtra("Name"));
             getSupportFragmentManager().beginTransaction()
                     .setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
                     .replace(R.id.dynamic_backbutton_container, openSubjectFragment).commit();
+        } else if(mIntent.getStringExtra("TypeOfFragment").equals("ConstructorFragment")) {
+            getSupportFragmentManager().beginTransaction()
+                    .setTransitionStyle(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                    .replace(R.id.dynamic_backbutton_container, new PollConstructor()).commit();
         }
     }
 }
