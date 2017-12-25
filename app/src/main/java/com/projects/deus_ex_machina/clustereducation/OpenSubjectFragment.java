@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 /**
@@ -23,7 +24,14 @@ public class OpenSubjectFragment extends Fragment{
         View view = inflater.inflate(R.layout.fragment_open_subject, null);
         TextView textView = view.findViewById(R.id.subject_namy);
         textView.setText(name_of_a_subject);
-        return inflater.inflate(R.layout.fragment_open_subject, container, false);
+        Button button = view.findViewById(R.id.button_send);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().finish();
+            }
+        });
+        return view;
     }
 
     public void setName_of_a_subject(String name_of_a_subject) {
