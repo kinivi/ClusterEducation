@@ -1,12 +1,15 @@
 package com.projects.deus_ex_machina.clustereducation;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 
 
 import java.util.ArrayList;
@@ -25,12 +28,12 @@ public class SubjectsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView;
+        final View rootView;
 
         rootView = inflater.inflate(R.layout.fragment_subject, container, false);
 
         //Array of objects containing icons and subject names
-        ArrayList<SubjectCard> subjects = new ArrayList<>();
+        final ArrayList<SubjectCard> subjects = new ArrayList<>();
 
         subjects.add(new SubjectCard("English", R.drawable.ic_subject_english));
         subjects.add(new SubjectCard("History of Ukraine", R.drawable.ic_subject_history));
@@ -41,13 +44,29 @@ public class SubjectsFragment extends Fragment {
         subjects.add(new SubjectCard("Programming", R.drawable.ic_subject_programming));
         subjects.add(new SubjectCard("Teamwork and presentation skills", R.drawable.ic_subject_teamwork));
 
-        SubjectCardAdapter subjectCardAdapter = new SubjectCardAdapter(getActivity(), subjects);
+        final SubjectCardAdapter subjectCardAdapter = new SubjectCardAdapter(getActivity(), subjects);
 
         GridView subjectsView = rootView.findViewById(R.id.subject_grid_view);
 
         subjectsView.setAdapter(subjectCardAdapter);
 
-        // Inflate the layout for this fragment
+        subjectsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                LayoutInflater inflater1 = getActivity().getLayoutInflater();
+                View view1 = inflater1.inflate(R.layout.fragment_open_subject, null);
+                SubjectCard[] objects = new SubjectCard[8];
+                objects = subjects.toArray(objects);
+                String sub_name = objects[i].getSubjectName();
+                //TextView textView = view1.findViewById(R.id.subject_namy);
+                //textView.setText(sub_name);
+                Intent subjectClick = new Intent(getContext(), BlankContainerActivity.class);
+                subjectClick.putExtra("TypeOfFragment", "OpenSubjectFragment");
+                subjectClick.putExtra("Name", sub_name);
+                startActivity(subjectClick);
+            }
+        });
+
         //return inflater.inflate(R.layout.fragment_subject, container, false);
         return subjectsView;
     }
