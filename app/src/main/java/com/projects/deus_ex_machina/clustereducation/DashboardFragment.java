@@ -292,71 +292,75 @@ public class DashboardFragment extends Fragment {
                                             }
                                         });
 
-                                        mDatabaseRef.child("polls/" + keyOfAnswer[0] +
-                                                "/" + "questions/" + iterator + "/" + "questionType")
+                                        mDatabaseRef.child("polls/" + keyOfAnswer[0])
                                                 .addListenerForSingleValueEvent(new ValueEventListener() {
                                                     @Override
                                                     public void onDataChange(DataSnapshot dataSnapshot) {
-                                                        String questionType = dataSnapshot.getValue(String.class);
+                                                        String questionType = dataSnapshot.child(
+                                                                "/" + "questions/" + finalIterator + "/" + "questionType").getValue(String.class);
 
-                                                        switch (questionType) {
-                                                            case "Radioboxes":
-                                                                mDatabaseRef.child("polls_answer/" + keyOfAnswer[0] + "/" + finalIterator + "/" + key)
-                                                                        .runTransaction(new Transaction.Handler() {
-                                                                            @Override
-                                                                            public Transaction.Result doTransaction(MutableData mutableData) {
-                                                                                int value;
+                                                        try {
+                                                            switch (questionType) {
+                                                                case "Radioboxes":
+                                                                    mDatabaseRef.child("polls_answer/" + keyOfAnswer[0] + "/" + finalIterator + "/" + key)
+                                                                            .runTransaction(new Transaction.Handler() {
+                                                                                @Override
+                                                                                public Transaction.Result doTransaction(MutableData mutableData) {
+                                                                                    int value;
 
-                                                                                try {
-                                                                                    value = mutableData.getValue(Integer.class);
-                                                                                    mutableData.setValue(++value);
-                                                                                } catch (NullPointerException e) {
-                                                                                    Log.e("Error in Transaction", e.getMessage());
+                                                                                    try {
+                                                                                        value = mutableData.getValue(Integer.class);
+                                                                                        mutableData.setValue(++value);
+                                                                                    } catch (NullPointerException e) {
+                                                                                        Log.e("Error in Transaction", e.getMessage());
+                                                                                    }
+
+
+                                                                                    return Transaction.success(mutableData);
                                                                                 }
 
+                                                                                @Override
+                                                                                public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
 
-                                                                                return Transaction.success(mutableData);
-                                                                            }
+                                                                                }
+                                                                            });
+                                                                    break;
+                                                                case "String":
+                                                                    mDatabaseRef.child("polls_answer/" + keyOfAnswer[0] + "/" + finalIterator)
+                                                                            .push().setValue(key);
+                                                                    break;
+                                                                case "Checkboxes":
 
-                                                                            @Override
-                                                                            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+                                                                    mDatabaseRef.child("polls_answer/" + keyOfAnswer[0] + "/" + finalIterator + "/" + key)
+                                                                            .runTransaction(new Transaction.Handler() {
+                                                                                @Override
+                                                                                public Transaction.Result doTransaction(MutableData mutableData) {
+                                                                                    int value;
 
-                                                                            }
-                                                                        });
-                                                                break;
-                                                            case "String":
-                                                                mDatabaseRef.child("polls_answer/" + keyOfAnswer[0] + "/" + finalIterator)
-                                                                        .push().setValue(key);
-                                                                break;
-                                                            case "Checkboxes":
+                                                                                    try {
+                                                                                        value = mutableData.getValue(Integer.class);
+                                                                                        mutableData.setValue(++value);
+                                                                                    } catch (NullPointerException e) {
+                                                                                        Log.e("Error in Transaction", e.getMessage());
+                                                                                    }
 
-                                                                mDatabaseRef.child("polls_answer/" + keyOfAnswer[0] + "/" + finalIterator + "/" + key)
-                                                                        .runTransaction(new Transaction.Handler() {
-                                                                            @Override
-                                                                            public Transaction.Result doTransaction(MutableData mutableData) {
-                                                                                int value;
 
-                                                                                try {
-                                                                                    value = mutableData.getValue(Integer.class);
-                                                                                    mutableData.setValue(++value);
-                                                                                } catch (NullPointerException e) {
-                                                                                    Log.e("Error in Transaction", e.getMessage());
+                                                                                    return Transaction.success(mutableData);
                                                                                 }
 
+                                                                                @Override
+                                                                                public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
 
-                                                                                return Transaction.success(mutableData);
-                                                                            }
-
-                                                                            @Override
-                                                                            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
-
-                                                                            }
-                                                                        });
-                                                                break;
+                                                                                }
+                                                                            });
+                                                                    break;
 
 
-                                                            default:
-                                                                break;
+                                                                default:
+                                                                    break;
+                                                            }
+                                                        } catch (NullPointerException e) {
+                                                            Log.e("Error in Transaction", e.getMessage());
                                                         }
                                                     }
 
@@ -582,7 +586,7 @@ public class DashboardFragment extends Fragment {
         //Creating custom array of Material Colors
         int[] MATERIAL_COLORS = {
                 rgb("#2ecc71"), rgb("#f1c40f"), rgb("#e74c3c"), rgb("#3498db"),
-                rgb("#2ecc71"), rgb("#f1c40f"), rgb("#e74c3c")
+                rgb("#6a97a6"), rgb("#f1c40f"), rgb("#e74c3c")
         };
 
         for (int i = 0; i < arrayList.size(); i++) {
