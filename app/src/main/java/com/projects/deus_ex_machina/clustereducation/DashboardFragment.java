@@ -80,7 +80,7 @@ public class DashboardFragment extends Fragment {
     private ListView listView;
     private DatabaseReference mDatabaseRef;
     private Integer numberOfSurvey = -1;
-    private String keyOfAnswersForChart = "-L0WEZeXhJP4HUhaQDaa";
+    private String[] keyOfAnswersForChart = {"-L1DswyZhKq9FK2_SXXP", "-L1DWJ-7itlucRkmzk3I"};
 
 
     public DashboardFragment() {
@@ -92,50 +92,82 @@ public class DashboardFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mDataChart = FirebaseDatabase.getInstance().getReference()
-                .child("polls_answer/" + keyOfAnswersForChart);
-
         //reset chart downloaded data counter
         dataIsDownloadedCounter = 0;
 
 
-        //Initialize array of chartData
-        for (int i = 0; i < 2; i++) {
-            chartData.add(null);
+        mDataChart = FirebaseDatabase.getInstance().getReference()
+                .child("polls_answer/" + keyOfAnswersForChart[0]);
+        chartData.add(null);
 
-            //Getting query of chart data ordering by value for Question1
-            final int finalI = i;
-            mDataChart.child(i + "").orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
+        //Getting query of chart data ordering by value for Question1
+        mDataChart.child(0 + "").orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
 
-                //Initialize array of pairs
-                ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
+            //Initialize array of pairs
+            ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
 
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    for (DataSnapshot data :
-                            dataSnapshot.getChildren()) {
+                for (DataSnapshot data :
+                        dataSnapshot.getChildren()) {
 
-                        //Logger for debug
-                        Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
-                        arrayList.add(new Pair<String, Integer>(data.getKey(), data.getValue(Integer.class)));
-                    }
-
-                    chartData.set(finalI, arrayList);
-
-                    //Increment counter of downloaded data for chart
-                    //There are 2 charts, so if counter is < 2 - wait until date will be downloaded
-                    dataIsDownloadedCounter++;
-
-                    //Update UI
-                    updateUI();
+                    //Logger for debug
+                    Log.d("TAG!!!!!!!!!", data.getKey() + ": " + data.getValue(Integer.class));
+                    arrayList.add(new Pair<String, Integer>(data.getKey(), data.getValue(Integer.class)));
                 }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+                chartData.set(0, arrayList);
+
+                //Increment counter of downloaded data for chart
+                //There are 2 charts, so if counter is < 2 - wait until date will be downloaded
+                dataIsDownloadedCounter++;
+
+                //Update UI
+                updateUI();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
+        mDataChart = FirebaseDatabase.getInstance().getReference()
+                .child("polls_answer/" + keyOfAnswersForChart[1]);
+        chartData.add(null);
+
+
+        mDataChart.child(1 + "").orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
+
+            //Initialize array of pairs
+            ArrayList<Pair<String, Integer>> arrayList = new ArrayList<Pair<String, Integer>>();
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot data :
+                        dataSnapshot.getChildren()) {
+
+                    //Logger for debug
+                    Log.d("TAG", data.getKey() + ": " + data.getValue(Integer.class));
+                    arrayList.add(new Pair<String, Integer>(data.getKey(), data.getValue(Integer.class)));
                 }
-            });
-        }
+
+                chartData.set(1, arrayList);
+
+                //Increment counter of downloaded data for chart
+                //There are 2 charts, so if counter is < 2 - wait until date will be downloaded
+                dataIsDownloadedCounter++;
+
+                //Update UI
+                updateUI();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
     }
 
     @Override
@@ -377,6 +409,9 @@ public class DashboardFragment extends Fragment {
     }
 
     private void setValueListenersToCharts() {
+
+
+
         listenerForQuestion1 = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -385,6 +420,9 @@ public class DashboardFragment extends Fragment {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                mDataChart = FirebaseDatabase.getInstance().getReference()
+                        .child("polls_answer/" + keyOfAnswersForChart[0]);
 
                 //Getting reference to data of chart
                 DatabaseReference mDataChartForQuestion1 = mDataChart.child("0");
@@ -435,6 +473,9 @@ public class DashboardFragment extends Fragment {
 
             }
         };
+
+
+
         listenerForQuestion2 = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -443,6 +484,9 @@ public class DashboardFragment extends Fragment {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                mDataChart = FirebaseDatabase.getInstance().getReference()
+                        .child("polls_answer/" + keyOfAnswersForChart[1]);
 
                 //Getting query of chart data ordering by value for Question2
                 DatabaseReference mDataChartForQuestion2 = mDataChart.child("1");
@@ -492,7 +536,12 @@ public class DashboardFragment extends Fragment {
             }
         };
 
+        mDataChart = FirebaseDatabase.getInstance().getReference()
+                .child("polls_answer/" + keyOfAnswersForChart[0]);
         mDataChart.child("0").addChildEventListener(listenerForQuestion1);
+
+        mDataChart = FirebaseDatabase.getInstance().getReference()
+                .child("polls_answer/" + keyOfAnswersForChart[1]);
 
         mDataChart.child("1").addChildEventListener(listenerForQuestion2);
     }
@@ -532,7 +581,8 @@ public class DashboardFragment extends Fragment {
 
         //Creating custom array of Material Colors
         int[] MATERIAL_COLORS = {
-                rgb("#2ecc71"), rgb("#f1c40f"), rgb("#e74c3c"), rgb("#3498db")
+                rgb("#2ecc71"), rgb("#f1c40f"), rgb("#e74c3c"), rgb("#3498db"),
+                rgb("#2ecc71"), rgb("#f1c40f"), rgb("#e74c3c")
         };
 
         for (int i = 0; i < arrayList.size(); i++) {
