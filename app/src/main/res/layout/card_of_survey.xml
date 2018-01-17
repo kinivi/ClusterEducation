@@ -37,14 +37,17 @@
 
             <TextView
                 android:id="@+id/sub_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="8dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:text="SubTitle"
+                app:layout_constraintBottom_toTopOf="@+id/expand_container"
+                app:layout_constraintEnd_toStartOf="@+id/survey_image"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/title"
-                android:layout_marginLeft="16dp" />
+                tools:text="выаа ывавы аыва ыва ыва ыавы аыва ываыва ыва ываыв" />
 
             <ImageView
                 android:id="@+id/survey_image"
