@@ -1,0 +1,220 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.projects.deus_ex_machina.clustereducation.PollConstructor">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false">
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floating_button_to_add_question"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:clickable="true"
+            android:src="@drawable/ic_add"
+            app:layout_constraintBottom_toTopOf="@+id/floating_button_to_save_survey"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.887"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floating_button_to_save_survey"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_save"
+            app:backgroundTint="@android:color/holo_green_light"
+            app:borderWidth="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.887"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.923" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <LinearLayout
+                android:id="@+id/container_in_constructor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+
+
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/intro_message"
+                app:layout_constraintVertical_bias="0.0" >
+
+                <EditText
+                    android:id="@+id/SurveyTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:textAlignment="center"
+                    android:hint="Survey Title"
+
+                    android:padding="8dp"
+                    />
+
+                <EditText
+                    android:id="@+id/SurveyIntroMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textMultiLine"
+                    android:hint="Survey Intro Message"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/card"
+                    android:padding="8dp"
+                    />
+
+                <EditText
+                    android:id="@+id/SurveyEndMessage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:inputType="textMultiLine"
+                    android:hint="Survey End Message"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/card"
+                    android:padding="8dp"
+                    />
+            </LinearLayout>
+
+            <!--<android.support.constraint.ConstraintLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent">-->
+            <!--&lt;!&ndash; TODO: Update blank fragment layout &ndash;&gt;-->
+            <!--<TextView-->
+            <!--android:id="@+id/mainTitle"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginEnd="8dp"-->
+            <!--android:layout_marginStart="8dp"-->
+            <!--android:layout_marginTop="8dp"-->
+            <!--android:text="Create your survey"-->
+            <!--android:textAlignment="center"-->
+            <!--android:textAppearance="@style/TextAppearance.AppCompat.Large"-->
+            <!--app:layout_constraintEnd_toEndOf="parent"-->
+            <!--app:layout_constraintStart_toStartOf="parent"-->
+            <!--app:layout_constraintTop_toTopOf="parent" />-->
+
+            <!--<android.support.design.widget.FloatingActionButton-->
+            <!--android:id="@+id/floating_button_to_add_question"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="8dp"-->
+            <!--android:layout_marginEnd="8dp"-->
+            <!--android:layout_marginStart="8dp"-->
+            <!--android:layout_marginTop="8dp"-->
+            <!--android:clickable="true"-->
+            <!--android:src="@drawable/ic_settings"-->
+            <!--app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--app:layout_constraintEnd_toEndOf="parent"-->
+            <!--app:layout_constraintHorizontal_bias="0.887"-->
+            <!--app:layout_constraintStart_toStartOf="parent"-->
+            <!--app:layout_constraintTop_toTopOf="parent"-->
+            <!--app:layout_constraintVertical_bias="0.946" />-->
+
+            <!--&lt;!&ndash;<EditText&ndash;&gt;-->
+            <!--&lt;!&ndash;android:id="@+id/title"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_marginEnd="8dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_marginStart="8dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_marginTop="24dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:ems="10"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:hint="Title"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:inputType="textPersonName"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:textColorHint="@color/colorPrimaryDark"&ndash;&gt;-->
+            <!--&lt;!&ndash;app:layout_constraintEnd_toEndOf="parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;app:layout_constraintHorizontal_bias="0.044"&ndash;&gt;-->
+            <!--&lt;!&ndash;app:layout_constraintStart_toStartOf="parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;app:layout_constraintTop_toBottomOf="@+id/mainTitle" />&ndash;&gt;-->
+
+            <!--&lt;!&ndash;<EditText&ndash;&gt;-->
+            <!--&lt;!&ndash;android:id="@+id/intro_message"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_marginEnd="8dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_marginStart="8dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:layout_marginTop="8dp"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:ems="10"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:hint="Intro message"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:inputType="textPersonName"&ndash;&gt;-->
+            <!--&lt;!&ndash;android:textColorHint="@color/colorPrimaryDark"&ndash;&gt;-->
+            <!--&lt;!&ndash;app:layout_constraintEnd_toEndOf="parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;app:layout_constraintHorizontal_bias="0.044"&ndash;&gt;-->
+            <!--&lt;!&ndash;app:layout_constraintStart_toStartOf="parent"&ndash;&gt;-->
+            <!--&lt;!&ndash;app:layout_constraintTop_toBottomOf="@+id/title" />&ndash;&gt;-->
+
+            <!--<LinearLayout-->
+            <!--android:id="@+id/container_in_constructor"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="300dp"-->
+            <!--android:layout_marginBottom="8dp"-->
+            <!--android:layout_marginEnd="8dp"-->
+            <!--android:layout_marginStart="8dp"-->
+            <!--android:layout_marginTop="16dp"-->
+            <!--android:orientation="vertical"-->
+            <!--app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--app:layout_constraintEnd_toEndOf="parent"-->
+            <!--app:layout_constraintStart_toStartOf="parent"-->
+            <!--app:layout_constraintTop_toBottomOf="@+id/intro_message"-->
+            <!--app:layout_constraintVertical_bias="0.0" />-->
+
+            <!--<android.support.design.widget.FloatingActionButton-->
+            <!--android:id="@+id/floating_button_to_add_question"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginBottom="8dp"-->
+            <!--android:layout_marginEnd="8dp"-->
+            <!--android:layout_marginStart="8dp"-->
+            <!--android:layout_marginTop="8dp"-->
+            <!--android:clickable="true"-->
+            <!--android:src="@drawable/ic_settings"-->
+            <!--app:layout_constraintBottom_toBottomOf="parent"-->
+            <!--app:layout_constraintEnd_toEndOf="parent"-->
+            <!--app:layout_constraintHorizontal_bias="0.887"-->
+            <!--app:layout_constraintStart_toStartOf="parent"-->
+            <!--app:layout_constraintTop_toTopOf="parent"-->
+            <!--app:layout_constraintVertical_bias="0.946" />-->
+
+
+            <!--</android.support.constraint.ConstraintLayout>-->
+
+        </ScrollView>
+    </android.support.constraint.ConstraintLayout>
+</FrameLayout>
+
